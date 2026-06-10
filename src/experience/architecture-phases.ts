@@ -367,17 +367,17 @@ export function architectureAtmosphereState(p: number): ArchitectureAtmosphereSt
 
     return {
 
-      fogNear: 18,
+      fogNear: 12,
 
-      fogFar: 80,
+      fogFar: 40,
 
-      dustOpacity: 0.14,
+      dustOpacity: 0.06,
 
-      ecosystemReveal: 0.5 + wideT * 0.5,
+      ecosystemReveal: 0.22 + wideT * 0.18,
 
-      cloudGlow: 0.55,
+      cloudGlow: 0.22,
 
-      edgeGlow: 0.72,
+      edgeGlow: 0.24,
 
     };
 
@@ -393,13 +393,13 @@ export function architectureAtmosphereState(p: number): ArchitectureAtmosphereSt
 
     fogFar: 34,
 
-    dustOpacity: 0.24 * (1 - finaleT * 0.15),
+    dustOpacity: 0.1 * (1 - finaleT * 0.2),
 
-    ecosystemReveal: 1.0 - finaleT * 0.12,
+    ecosystemReveal: 0.38 - finaleT * 0.08,
 
-    cloudGlow: 0.4 + finaleT * 0.15,
+    cloudGlow: 0.28,
 
-    edgeGlow: 0.35,
+    edgeGlow: 0.22,
 
   };
 
@@ -613,11 +613,15 @@ export interface PostFxState {
 
   bloomIntensity: number;
 
+  bloomRadius: number;
+
   worldFocusDistance: number;
 
   focusRange: number;
 
   bokehScale: number;
+
+  vignetteDarkness: number;
 
 }
 
@@ -631,11 +635,15 @@ export function postFxState(p: number): PostFxState {
 
     bloomIntensity: 0.36,
 
+    bloomRadius: 0.42,
+
     worldFocusDistance: 14,
 
     focusRange: 10,
 
     bokehScale: 0.85,
+
+    vignetteDarkness: 0.36,
 
   };
 
@@ -653,7 +661,7 @@ export function postFxState(p: number): PostFxState {
 
   if (phase === 'traverse') {
 
-    return { ...base, dofStrength: 0, bloomIntensity: 0.18, worldFocusDistance: 14, focusRange: 12, bokehScale: 0.5 };
+    return { ...base, dofStrength: 0, bloomIntensity: 0.18, bloomRadius: 0.36, worldFocusDistance: 14, focusRange: 12, bokehScale: 0.5, vignetteDarkness: 0.3 };
 
   }
 
@@ -667,13 +675,17 @@ export function postFxState(p: number): PostFxState {
 
       dofStrength: 0,
 
-      bloomIntensity: 0.34,
+      bloomIntensity: 0.12,
+
+      bloomRadius: 0.28,
 
       worldFocusDistance: 16,
 
       focusRange: 14,
 
       bokehScale: 0.65,
+
+      vignetteDarkness: 0.3,
 
     };
 
@@ -683,15 +695,15 @@ export function postFxState(p: number): PostFxState {
 
   if (phase === 'finale') {
 
-    const finaleT = architecturePhaseProgress(local, 'finale');
-
     return {
 
       ...base,
 
-      dofStrength: 0.08 * (1 - finaleT),
+      dofStrength: 0,
 
-      bloomIntensity: 0.38 - finaleT * 0.08,
+      bloomIntensity: 0.14,
+
+      bloomRadius: 0.3,
 
       worldFocusDistance: 15,
 
@@ -699,13 +711,15 @@ export function postFxState(p: number): PostFxState {
 
       bokehScale: 0.6,
 
+      vignetteDarkness: 0.28,
+
     };
 
   }
 
 
 
-  return { ...base, dofStrength: 0, bloomIntensity: 0.14, worldFocusDistance: 14, focusRange: 12, bokehScale: 0.5 };
+  return { ...base, dofStrength: 0, bloomIntensity: 0.14, bloomRadius: 0.36, worldFocusDistance: 14, focusRange: 12, bokehScale: 0.5, vignetteDarkness: 0.32 };
 
 }
 

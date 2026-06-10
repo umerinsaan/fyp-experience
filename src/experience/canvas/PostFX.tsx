@@ -66,7 +66,8 @@ export function PostFX({ progressRef }: PostFXProps) {
     const warm = Math.min(1, (performance.now() - mountAt) / 900);
 
     bloom.intensity = state.bloomIntensity * warm;
-    vignette.darkness = 0.36 * warm;
+    bloom.mipmapBlurPass.radius = state.bloomRadius;
+    vignette.darkness = state.vignetteDarkness * warm;
 
     if (!dof.cocMaterial || !dof.blurPass) return;
 

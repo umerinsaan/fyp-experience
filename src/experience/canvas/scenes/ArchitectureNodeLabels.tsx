@@ -1,5 +1,6 @@
 /**
- * Floating 3D HTML labels at node anchors during dock sub-phase.
+ * Screen-space node labels during the wide / finale diagram reveal.
+ * Html keeps labels readable when the camera zooms out (world-space text shrinks).
  */
 import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
@@ -20,6 +21,7 @@ export function ArchitectureNodeLabels({
   progressRef: React.MutableRefObject<number>;
 }) {
   const [opacities, setOpacities] = useState<number[]>(() => ARCH_NODES.map(() => 0));
+  const [wideLit, setWideLit] = useState(false);
   const lastUpdate = useRef(0);
 
   useFrame(({ clock }) => {
@@ -36,7 +38,7 @@ export function ArchitectureNodeLabels({
     const next = ARCH_NODES.map((_, i) => {
       if (phase !== 'traverse' && !allLit) return 0;
       const sub = architectureNodeSubPhase(local, i);
-      if (allLit) return 0.55 * pres.value;
+      if (allLit) return 0.98 * pres.value;
       if (i === step && sub === 'dock') return pres.value * 0.72;
       return 0;
     });
@@ -44,6 +46,7 @@ export function ArchitectureNodeLabels({
     if (clock.elapsedTime - lastUpdate.current > 0.05) {
       lastUpdate.current = clock.elapsedTime;
       setOpacities(next);
+      setWideLit(allLit);
     }
   });
 
@@ -58,10 +61,11 @@ export function ArchitectureNodeLabels({
             key={node.id}
             position={[pos.x, pos.y + 0.38, pos.z]}
             center
-            distanceFactor={8}
+            distanceFactor={4.2}
+            zIndexRange={[40, 0]}
             style={{ opacity, pointerEvents: 'none' }}
           >
-            <div className="exp-arch-float">
+            <div className={`exp-arch-float${wideLit ? ' exp-arch-float--wide' : ''}`}>
               <span className="exp-arch-float__index">{String(i + 1).padStart(2, '0')}</span>
               <span className="exp-arch-float__name">{node.label}</span>
             </div>

@@ -18,10 +18,9 @@ import { ReportBurdenOverlay } from '@/experience/overlays/ReportBurdenOverlay';
 import { CostLoopOverlay } from '@/experience/overlays/CostLoopOverlay';
 import { CostManualEffortOverlay } from '@/experience/overlays/CostManualEffortOverlay';
 import { CostStitchOverlay } from '@/experience/overlays/CostStitchOverlay';
-import { ObjectiveHumanOverlay } from '@/experience/overlays/ObjectiveHumanOverlay';
 import { ObjectiveOrbitOverlay } from '@/experience/overlays/ObjectiveOrbitOverlay';
-import { ArchitectureIntro } from '@/experience/overlays/ArchitectureBrief';
 import { ArchitectureFinale } from '@/experience/overlays/ArchitectureFinale';
+import { ArchitectureScrimDriver } from '@/experience/overlays/ArchitectureScrimDriver';
 import { VisionFinale } from '@/experience/overlays/VisionFinale';
 import { WorkflowBrief } from '@/experience/overlays/WorkflowBrief';
 import { JobsOverlay } from '@/experience/overlays/JobsOverlay';
@@ -57,11 +56,10 @@ function Stage({ reduced }: { reduced: boolean }) {
       <ToolOutputsOverlay progress={progress} />
       <ReportBurdenOverlay progress={progress} />
       <CostLoopOverlay progress={progress} />
-      <ObjectiveHumanOverlay progress={progress} />
       <ObjectiveOrbitOverlay progress={progress} />
       <ComparisonBeat progress={progress} />
-      <ArchitectureIntro progress={progress} />
       <ArchitectureFinale progress={progress} />
+      <ArchitectureScrimDriver progress={progress} />
       <WorkflowBrief progress={progress} />
       <JobsOverlay progress={progress} />
       <PipelineOverlay progress={progress} />

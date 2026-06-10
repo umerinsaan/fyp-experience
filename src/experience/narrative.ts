@@ -194,7 +194,7 @@ export const ACTS: readonly Act[] = [
   {
     id: 'architecture',
     numeral: 'III',
-    name: 'The Blueprint',
+    name: 'Architecture',
     question: 'How does the whole system fit together?',
     accent: 'purple',
     weight: 0.17,

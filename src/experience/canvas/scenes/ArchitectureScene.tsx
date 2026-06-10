@@ -15,15 +15,11 @@ import * as THREE from 'three';
 import { FONT_DISPLAY_3D } from '@/content/asset-manifest';
 
 import {
-
   architectureGlobalLocal,
-
   architectureNodeStep,
-
   architecturePhase,
-
   architecturePhaseProgress,
-
+  architectureWideProgress,
 } from '@/experience/architecture-phases';
 
 import { actPresence } from '@/experience/canvas/scene-utils';
@@ -66,7 +62,7 @@ const TUBE_R = 0.028;
 
 const DOCK_FONT = 0.105;
 
-const WIDE_FONT = 0.22;
+const WIDE_FONT = 0.28;
 
 const SAT_RADIUS = NODE_RADIUS * 0.42;
 
@@ -75,15 +71,11 @@ const SAT_FONT = 0.082;
 
 
 type TroikaText = THREE.Object3D & {
-
   fillOpacity: number;
-
+  outlineOpacity: number;
   fontSize: number;
-
   maxWidth: number;
-
   sync: () => void;
-
 };
 
 
@@ -240,6 +232,8 @@ export function ArchitectureScene({
 
     const pullT = archLocal >= 0 ? architecturePhaseProgress(archLocal, 'pullback') : 0;
 
+    const wideT = archLocal >= 0 && allActive ? architectureWideProgress(archLocal) : 0;
+
     const diagramAlpha = diagramRevealAlpha(phase, archLocal, pullT);
 
     const outgoingEdge = phase === 'traverse' && step >= 0 ? traverseEdgeIndex(step) : -1;
@@ -284,9 +278,9 @@ export function ArchitectureScene({
 
       if (fill) {
 
-        fill.opacity = alpha * (focused ? 0.98 : 0.92);
+        fill.opacity = alpha * (allActive ? 1 : focused ? 0.98 : 0.92);
 
-        fill.transparent = alpha < 0.995;
+        fill.transparent = !allActive && alpha < 0.995;
 
       }
 
@@ -298,7 +292,7 @@ export function ArchitectureScene({
 
         wash.color.copy(accent);
 
-        wash.opacity = alpha * (focused ? 0.16 : 0.09);
+        wash.opacity = alpha * (allActive ? 0.24 : focused ? 0.16 : 0.09);
 
         wash.transparent = true;
 
@@ -314,13 +308,13 @@ export function ArchitectureScene({
 
           ring.color.copy(accent);
 
-          ring.opacity = alpha * (allActive ? 0.9 : 0.88);
+          ring.opacity = alpha * (allActive ? 0.96 : 0.88);
 
         } else {
 
-          ring.color.set(MUTED_STROKE);
+          ring.color.set(allActive ? '#64748b' : MUTED_STROKE);
 
-          ring.opacity = alpha * 0.74;
+          ring.opacity = alpha * (allActive ? 0.82 : 0.74);
 
         }
 
@@ -332,11 +326,15 @@ export function ArchitectureScene({
 
       if (label && 'sync' in label) {
 
-        label.fontSize = allActive ? WIDE_FONT : DOCK_FONT;
+        const labelFill = alpha * (allActive ? 1 : focused ? 0.98 : 0.88);
 
-        label.maxWidth = allActive ? NODE_RADIUS * 2.1 : NODE_RADIUS * 1.45;
+        label.fontSize = allActive ? WIDE_FONT * (0.92 + wideT * 0.12) : DOCK_FONT;
 
-        label.fillOpacity = alpha * (focused ? 0.95 : 0.8);
+        label.maxWidth = allActive ? NODE_RADIUS * 2.15 : NODE_RADIUS * 1.45;
+
+        label.fillOpacity = labelFill;
+
+        label.outlineOpacity = labelFill * (allActive ? 0.55 : 0.92);
 
         label.sync();
 
@@ -412,9 +410,13 @@ export function ArchitectureScene({
 
         if (satLabelRef.current && 'sync' in satLabelRef.current) {
 
-          satLabelRef.current.fontSize = allActive ? SAT_FONT * 1.15 : SAT_FONT;
+          satLabelRef.current.fontSize = allActive ? SAT_FONT * 1.4 : SAT_FONT;
 
-          satLabelRef.current.fillOpacity = satAlpha * (allActive ? 0.88 : 0.72);
+          const satFill = satAlpha * (allActive ? 1 : 0.72);
+
+          satLabelRef.current.fillOpacity = satFill;
+
+          satLabelRef.current.outlineOpacity = satFill * (allActive ? 0.95 : 0);
 
           satLabelRef.current.sync();
 
@@ -616,6 +618,12 @@ export function ArchitectureScene({
 
             fillOpacity={0}
 
+            outlineWidth={0.014}
+
+            outlineColor="#ffffff"
+
+            outlineOpacity={0}
+
             lineHeight={1.05}
 
             renderOrder={20}
@@ -707,6 +715,12 @@ export function ArchitectureScene({
           textAlign="center"
 
           fillOpacity={0}
+
+          outlineWidth={0.014}
+
+          outlineColor="#f8fafc"
+
+          outlineOpacity={0}
 
           lineHeight={1.05}
 

@@ -77,7 +77,7 @@ function AccentKeyLight({ progressRef }: { progressRef: React.MutableRefObject<n
     accentColorAt(progressRef.current, color);
     ref.current.color.lerp(color, 0.06);
     const arch = architectureAtmosphereState(progressRef.current);
-    ref.current.intensity = 2.8 + arch.ecosystemReveal * 1.6;
+    ref.current.intensity = 2.8 + arch.ecosystemReveal * 0.65;
   });
 
   return <pointLight ref={ref} position={[1.2, 1.8, 1.8]} intensity={2.8} distance={28} decay={2} />;
@@ -126,7 +126,7 @@ export function Atmosphere({
         count={ECOSYSTEM_DUST_COUNT}
         spread={[32, 18, 18]}
         size={0.012}
-        opacityScale={(a) => a.ecosystemReveal * 0.42}
+        opacityScale={(a) => a.ecosystemReveal * 0.2}
         progressRef={progressRef}
       />
     </>
