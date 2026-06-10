@@ -1,0 +1,117 @@
+/* Entry hero — kinetic typography, mesh blobs, animated panel border */
+
+@property --entry-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes entry-gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes entry-border-spin {
+  to {
+    --entry-angle: 360deg;
+  }
+}
+
+@keyframes entry-mesh-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(3%, -2%) scale(1.05);
+  }
+  66% {
+    transform: translate(-2%, 2%) scale(0.98);
+  }
+}
+
+.entry-gradient-text {
+  background: linear-gradient(
+    120deg,
+    #0891b2 0%,
+    #2dd4bf 25%,
+    #8b5cf6 55%,
+    #d946ef 80%,
+    #0891b2 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: entry-gradient-shift 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-gradient-text {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}
+
+.entry-mesh-blobs {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.22), transparent 42%),
+    radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.2), transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(217, 70, 239, 0.14), transparent 38%);
+  animation: entry-mesh-drift 18s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-mesh-blobs {
+    animation: none;
+  }
+}
+
+.entry-panel-glow {
+  position: relative;
+  border-radius: 1rem;
+  background: conic-gradient(
+    from var(--entry-angle),
+    #06b6d4,
+    #2dd4bf,
+    #8b5cf6,
+    #d946ef,
+    #06b6d4
+  );
+  animation: entry-border-spin 5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-panel-glow {
+    animation: none;
+    --entry-angle: 135deg;
+    background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+  }
+}
+
+.entry-panel-inner {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 8px 40px rgba(15, 23, 42, 0.1),
+    0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.entry-scanline {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(15, 23, 42, 0.5) 2px,
+    rgba(15, 23, 42, 0.5) 3px
+  );
+}
+
+.entry-scene canvas {
+  touch-action: none;
+}

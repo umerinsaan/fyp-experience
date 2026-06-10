@@ -1,0 +1,48 @@
+---
+description: FYP Experience — bright vibrant sci-fi, visibility-first, desktop-only, preloader
+alwaysApply: true
+---
+
+# FYP Experience Remake — Design & Motion Direction
+
+Applies to all **fyp-experience** work. **Visibility beats aesthetics** — if color or motion hurts readability, change the color or motion.
+
+## Viewport priority — desktop first, no mobile
+
+- **Primary:** desktop, laptop, projector — design at **1280px+** (1920×1080 for viva/projector).
+- **Secondary:** tablets (768–1279px) tolerated; no dedicated mobile layout work.
+- **No mobile:** do not optimize for phones; block `<768px` with `DesktopOnlyNotice`.
+- **No mobile-first breakpoints** — author layouts for large screens; use `xl:` / fixed grids, not `sm:` stacking for phones.
+- **3D quality:** single desktop tier — `dpr={[1, 1.75]}`, full particles; no mobile degradation paths.
+
+## Boot / preloader
+
+- **Session boot:** `PreloadProvider` + `PreloaderGate` — once per session (`fyp-exp-boot-v1` in sessionStorage).
+- **Phases:** fonts → critical assets → three.js chunk → WebGL first frame (`signalWebGLReady`).
+- **Timing:** min ~1.4s, max ~3.5s; always **skippable** (button + Esc).
+- **Entry reveal:** gate `EntryHero` stagger on `revealed` from preload context — not on mount.
+- **Extend assets:** add URLs to `src/content/asset-manifest.ts` (`PRELOAD_CRITICAL` / `PRELOAD_PREFETCH`).
+
+## Priority #1 — Visibility & contrast
+
+- **WCAG AA minimum** for all body text and interactive controls (4.5:1). Prefer **AAA (7:1)** for paragraphs.
+- **Never** place muted text on vibrant gradients without a legibility layer.
+- **Primary text** on light surfaces: `#0f172a`–`#111827`. **Secondary:** `#334155`–`#475569`.
+- **Focus rings:** 2px+ solid `--color-focus`; min 44×44px hit targets on desktop pointer UI.
+- **Motion:** respect `prefers-reduced-motion`; skip boot animation when reduced.
+
+## Visual theme — bright, vibrant, futuristic sci-fi
+
+- Light luminous backgrounds, white cards, visible borders, saturated cyan/mint/violet/magenta accents.
+- Copy on solid/frosted panels — not on loud gradients.
+- **No bezel chrome:** no persistent header/footer — full-viewport immersion.
+
+## Motion & 3D
+
+- **Framer Motion** for UI — no GSAP.
+- **R3F + Drei + Three.js** required for narrative 3D beats.
+- Official FYP mark from `FYP.UI/public/fyp-icon.svg`.
+
+## Tokens
+
+Single source: `src/styles/tokens.css`.

@@ -1,0 +1,151 @@
+.boot-screen {
+  cursor: wait;
+}
+
+.boot-mesh {
+  background:
+    radial-gradient(circle at 30% 40%, rgba(6, 182, 212, 0.2), transparent 45%),
+    radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.18), transparent 42%);
+  animation: entry-mesh-drift 14s ease-in-out infinite;
+}
+
+.boot-skip {
+  cursor: pointer;
+}
+
+/* ---- Anticipation sequence ------------------------------------------------ */
+.boot-wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.05;
+  color: var(--color-text);
+}
+
+.boot-wordmark__accent {
+  background: linear-gradient(120deg, #06b6d4, #8b5cf6 60%, #d946ef);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.boot-subtitle {
+  margin-top: 0.9rem;
+  max-width: 32rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 1vw, 0.85rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* Chain fragments assembling as the engine warms. */
+.boot-fragments {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin-top: 2.4rem;
+}
+
+.boot-fragment {
+  width: 18px;
+  height: 13px;
+  border-radius: 999px;
+  border: 2px solid var(--color-border-strong);
+  opacity: 0.4;
+  transform: scale(0.82);
+  transition: border-color 0.45s ease, box-shadow 0.45s ease, opacity 0.45s ease, transform 0.45s ease;
+}
+
+.boot-fragment:nth-child(even) {
+  transform: scale(0.82) rotate(90deg);
+}
+
+.boot-fragment[data-on='true'] {
+  border-color: var(--act-accent, #06b6d4);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.45);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.boot-fragment[data-on='true']:nth-child(even) {
+  transform: scale(1) rotate(90deg);
+}
+
+/* Slim progress hairline. */
+.boot-bar {
+  position: relative;
+  margin-top: 2.2rem;
+  height: 2px;
+  width: min(360px, 70vw);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+}
+
+.boot-bar__fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #06b6d4, #8b5cf6, #d946ef);
+}
+
+.boot-pct {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--color-text-muted);
+}
+
+/* Initialization diagnostics — elegant, never a fake hacking screen. */
+.boot-diag {
+  margin-top: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: min(360px, 70vw);
+  text-align: left;
+}
+
+.boot-diag-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  opacity: 0.35;
+  transition: opacity 0.4s ease, color 0.4s ease;
+}
+
+.boot-diag-line[data-on='true'] {
+  opacity: 1;
+  color: var(--color-text-secondary);
+}
+
+.boot-diag-tick {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-border-strong);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.boot-diag-line[data-on='true'] .boot-diag-tick {
+  background: var(--act-accent, #06b6d4);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-mesh {
+    animation: none;
+  }
+
+  .boot-fragment,
+  .boot-fragment[data-on='true'] {
+    transition: none;
+  }
+}

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+backup-usb/
+*.local
+node_modules/.tmp/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# 3D / design source (keep exports in public/models)
+*.blend1
+*.psd
+public/models/soc-desk.raw.glb
+
+# Temp
+.cache/
+.temp/
