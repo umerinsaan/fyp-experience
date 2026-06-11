@@ -22,7 +22,6 @@ export const NODE_POS: Record<string, THREE.Vector3> = {
   storage: new THREE.Vector3(-5.5, -3.5, DIAGRAM_Z),
   ingestion: new THREE.Vector3(-10.0, -3.5, DIAGRAM_Z),
   livefeed: new THREE.Vector3(-14.5, -3.5, DIAGRAM_Z),
-  targets: new THREE.Vector3(-5.0, -6.8, DIAGRAM_Z),
 };
 
 export const LAYER_POS = NODE_POS;
@@ -57,36 +56,9 @@ export function diagramExtents(targetCenter = new THREE.Vector3()): DiagramExten
   };
 }
 
-/** Wide-shot bounds — main nodes plus the targets satellite anchor. */
+/** Wide-shot bounds — same as traverse diagram bounds. */
 export function wideDiagramExtents(targetCenter = new THREE.Vector3()): DiagramExtents {
-  let minX = Infinity;
-  let maxX = -Infinity;
-  let minY = Infinity;
-  let maxY = -Infinity;
-
-  for (const node of ARCH_NODES) {
-    const p = NODE_POS[node.id];
-    if (!p) continue;
-    minX = Math.min(minX, p.x);
-    maxX = Math.max(maxX, p.x);
-    minY = Math.min(minY, p.y);
-    maxY = Math.max(maxY, p.y);
-  }
-
-  const targets = NODE_POS.targets;
-  if (targets) {
-    minX = Math.min(minX, targets.x);
-    maxX = Math.max(maxX, targets.x);
-    minY = Math.min(minY, targets.y);
-    maxY = Math.max(maxY, targets.y);
-  }
-
-  const pad = NODE_RADIUS * 2.2;
-  return {
-    center: targetCenter.set((minX + maxX) / 2, (minY + maxY) / 2, DIAGRAM_Z),
-    width: maxX - minX + pad,
-    height: maxY - minY + pad,
-  };
+  return diagramExtents(targetCenter);
 }
 
 export const SCENE_CENTER = diagramExtents().center.clone();

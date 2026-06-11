@@ -17,13 +17,29 @@ const ACT_STARTS: readonly number[] = ACT_WINDOWS.map((w) => w.start + (w.end - 
 
 const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', ' ', 'Spacebar']);
 
+function isScrollKey(key: string): boolean {
+  return SCROLL_KEYS.has(key);
+}
+
+function releaseScrollKey(keys: Set<string>, key: string): void {
+  keys.delete(key);
+  if (key === ' ') keys.delete('Spacebar');
+}
+
+function notifyIfScrollIdle(keys: Set<string>, endKeyboardScroll: () => void): void {
+  for (const k of keys) {
+    if (isScrollKey(k)) return;
+  }
+  endKeyboardScroll();
+}
+
 function isEditableTarget(target: EventTarget | null): boolean {
   const tag = (target as HTMLElement | null)?.tagName;
   return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
 }
 
 export function KeyboardNavDriver() {
-  const { scrollToProgress, scrollByDelta } = useExperience();
+  const { scrollToProgress, scrollByDelta, endKeyboardScroll } = useExperience();
   const activeKeysRef = useRef(new Set<string>());
   const rafRef = useRef(0);
   const lastFrameRef = useRef(0);
@@ -58,6 +74,8 @@ export function KeyboardNavDriver() {
 
       if (SCROLL_KEYS.has(e.key)) {
         e.preventDefault();
+        // Ignore OS key-repeat events — the rAF loop already scrolls while keys are held.
+        if (e.repeat) return;
         activeKeysRef.current.add(e.key);
         return;
       }
@@ -97,12 +115,14 @@ export function KeyboardNavDriver() {
     };
 
     const onKeyUp = (e: KeyboardEvent) => {
-      activeKeysRef.current.delete(e.key);
-      if (e.key === ' ') activeKeysRef.current.delete('Spacebar');
+      if (!isScrollKey(e.key)) return;
+      releaseScrollKey(activeKeysRef.current, e.key);
+      notifyIfScrollIdle(activeKeysRef.current, endKeyboardScroll);
     };
 
     const onBlur = () => {
       activeKeysRef.current.clear();
+      endKeyboardScroll();
     };
 
     window.addEventListener('keydown', onKeyDown);
@@ -116,7 +136,7 @@ export function KeyboardNavDriver() {
       window.removeEventListener('blur', onBlur);
       activeKeysRef.current.clear();
     };
-  }, [scrollToProgress, scrollByDelta]);
+  }, [scrollToProgress, scrollByDelta, endKeyboardScroll]);
 
   return null;
 }

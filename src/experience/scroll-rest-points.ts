@@ -40,6 +40,9 @@ export const BOOKMARK_BUDGET = 2.5;
 export const BOOKMARK_RESIST = 0.28;
 export const SCENE_BUDGET = 2.0;
 export const ESCAPE_THRESHOLD = 3.5;
+/** Lower threshold for held keyboard — intentional traverse through rests. */
+export const ESCAPE_THRESHOLD_KEYBOARD = 1.75;
+export const ESCAPE_IDLE_DECAY_MS = 800;
 export const REST_CAMERA_DAMP = 20;
 export const REST_CAMERA_DAMP_THRESHOLD = 0.5;
 
@@ -95,7 +98,7 @@ function architectureDockHolds(): RestPoint[] {
     const archLocal = ARCH_PHASE_LOCAL.traverse.start + traverseT * traverseSpan;
     return {
       progress: w.start + span * archLocal,
-      radius: span * slot * NODE_SLOT.dock * 0.45,
+      radius: span * slot * NODE_SLOT.dock * 0.32,
       budget: ARCH_DOCK_BUDGET,
       resist: ARCH_DOCK_RESIST,
       tier: 'scene',
@@ -238,8 +241,13 @@ export function restInfluence(p: number): number {
 }
 
 /** Wheel speed factor — never zero; escapeAccum breaks resistance. */
-export function scrollSpeedFactor(progress: number, escapeAccum: number): number {
-  const escape = clamp01(escapeAccum / ESCAPE_THRESHOLD);
+export function scrollSpeedFactor(
+  progress: number,
+  escapeAccum: number,
+  opts?: { keyboard?: boolean },
+): number {
+  const threshold = opts?.keyboard ? ESCAPE_THRESHOLD_KEYBOARD : ESCAPE_THRESHOLD;
+  const escape = clamp01(escapeAccum / threshold);
   let minFactor = 1;
   for (const rest of getRestPoints()) {
     const dist = Math.abs(progress - rest.progress);

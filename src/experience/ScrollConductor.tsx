@@ -1,23 +1,15 @@
 /**
  * ScrollConductor — rAF-smoothed scroll with rest resistance, escape accumulator,
- * conductor-driven jump easing, and optional idle settle toward nearest rest.
+ * and conductor-driven jump easing.
  */
 import { useEffect, useRef } from 'react';
 import { useExperience } from '@/experience/ExperienceContext';
 import { progressToScrollTop } from '@/experience/scroll-jump';
 import { scrollTopToProgress } from '@/experience/scroll-progress';
-import {
-  nearestRest,
-  restInfluence,
-  scrollSpeedFactor,
-} from '@/experience/scroll-rest-points';
-import type { ScrollConductorBridge, ScrollJumpOpts } from '@/experience/scroll-conductor-bridge';
+import { ESCAPE_IDLE_DECAY_MS, scrollSpeedFactor } from '@/experience/scroll-rest-points';
+import type { ScrollConductorBridge, ScrollInputSource, ScrollJumpOpts } from '@/experience/scroll-conductor-bridge';
 import { clamp01, easeInOutCubic, JUMP_DURATION_MS, SMOOTH_LAMBDA } from '@/story/scroll-math';
 
-const SETTLE_IDLE_MS = 180;
-const SETTLE_DURATION_MS = 400;
-const SETTLE_INFLUENCE_MIN = 0.6;
-const SETTLE_VELOCITY_MAX = 80;
 const WHEEL_LINE_PX = 48;
 
 interface JumpState {
@@ -42,9 +34,8 @@ export function ScrollConductor() {
   const escapeDirRef = useRef(0);
   const jumpRef = useRef<JumpState | null>(null);
   const lastInputMsRef = useRef(0);
-  const settleFromRef = useRef(0);
-  const settleStartMsRef = useRef(0);
-  const settleActiveRef = useRef(false);
+  const lastInputSourceRef = useRef<ScrollInputSource>('wheel');
+  const keyboardFramesRef = useRef(0);
   const rafRef = useRef(0);
   const lastFrameMsRef = useRef(0);
 
@@ -76,26 +67,62 @@ export function ScrollConductor() {
 
     const currentProgress = () => scrollTopToProgress(section, scrollYRef.current);
 
-    const addDelta = (rawPx: number) => {
-      settleActiveRef.current = false;
+    const addDelta = (rawPx: number, source: ScrollInputSource = 'wheel') => {
+      if (rawPx === 0) return;
+
       jumpRef.current = null;
       lastInputMsRef.current = performance.now();
+      lastInputSourceRef.current = source;
 
       const dir = Math.sign(rawPx) || escapeDirRef.current;
+
+      // Reverse direction: snap target to current scroll so we don't fight lag/inertia.
+      if (dir !== 0 && escapeDirRef.current !== 0 && dir !== escapeDirRef.current) {
+        targetRef_.current = scrollYRef.current;
+        escapeAccumRef.current = 0;
+        keyboardFramesRef.current = 0;
+      }
+
       if (dir === escapeDirRef.current) escapeAccumRef.current += 1;
       else {
         escapeDirRef.current = dir;
         escapeAccumRef.current = 1;
       }
 
+      if (source === 'keyboard') {
+        keyboardFramesRef.current += 1;
+        // Sustained arrow keys = deliberate pass-through at architecture rests.
+        if (keyboardFramesRef.current >= 3) {
+          escapeAccumRef.current = Math.max(escapeAccumRef.current, 4);
+        }
+      } else {
+        keyboardFramesRef.current = 0;
+      }
+
       const prog = currentProgress();
-      const factor = scrollSpeedFactor(prog, escapeAccumRef.current);
+      const factor = scrollSpeedFactor(prog, escapeAccumRef.current, {
+        keyboard: source === 'keyboard',
+      });
       targetRef_.current = clampY(targetRef_.current + rawPx * factor);
+
+      // Keyboard: apply immediately — no lerp lag or post-key-up coast.
+      if (source === 'keyboard') {
+        applyScrollY(targetRef_.current);
+      }
+    };
+
+    const endKeyboardScroll = () => {
+      jumpRef.current = null;
+      targetRef_.current = scrollYRef.current;
+      velocityRef.current = 0;
+      keyboardFramesRef.current = 0;
+      escapeAccumRef.current = 0;
+      escapeDirRef.current = 0;
     };
 
     const jumpTo = (progress: number, opts?: ScrollJumpOpts) => {
-      settleActiveRef.current = false;
       escapeAccumRef.current = 0;
+      keyboardFramesRef.current = 0;
       const top = progressToScrollTop(section, progress);
       if (!opts?.smooth) {
         jumpRef.current = null;
@@ -122,6 +149,7 @@ export function ScrollConductor() {
     const bridge: ScrollConductorBridge = {
       addDelta,
       jumpTo,
+      endKeyboardScroll,
       syncFromNative,
       getMetrics: () => ({
         scrollY: scrollYRef.current,
@@ -139,48 +167,23 @@ export function ScrollConductor() {
       lastFrameMsRef.current = now;
 
       const prevY = scrollYRef.current;
-      let target = targetRef_.current;
+      const target = targetRef_.current;
 
       const jump = jumpRef.current;
       if (jump) {
         const t = clamp01((now - jump.startMs) / jump.durationMs);
         const eased = easeInOutCubic(t);
-        target = jump.from + (jump.to - jump.from) * eased;
-        scrollYRef.current = target;
+        scrollYRef.current = jump.from + (jump.to - jump.from) * eased;
         if (t >= 1) jumpRef.current = null;
-      } else if (settleActiveRef.current) {
-        const st = clamp01((now - settleStartMsRef.current) / SETTLE_DURATION_MS);
-        const eased = easeInOutCubic(st);
-        target = settleFromRef.current + (targetRef_.current - settleFromRef.current) * eased;
+      } else if (lastInputSourceRef.current === 'keyboard' && keyboardFramesRef.current > 0) {
+        // Keyboard uses direct apply in addDelta; keep in sync if tick runs alone.
         scrollYRef.current = target;
-        if (st >= 1) settleActiveRef.current = false;
+        velocityRef.current = 0;
       } else {
         const damp = 1 - Math.exp(-SMOOTH_LAMBDA * dt);
         const next = prevY + (target - prevY) * damp;
         scrollYRef.current = next;
-        velocityRef.current = (next - prevY) / dt;
-
-        const idleMs = now - lastInputMsRef.current;
-        if (
-          idleMs > SETTLE_IDLE_MS &&
-          Math.abs(velocityRef.current) < SETTLE_VELOCITY_MAX &&
-          Math.abs(target - prevY) < 2
-        ) {
-          const prog = scrollTopToProgress(section, next);
-          const influence = restInfluence(prog);
-          if (influence >= SETTLE_INFLUENCE_MIN) {
-            const rest = nearestRest(prog);
-            if (rest) {
-              const restTop = progressToScrollTop(section, rest.progress);
-              if (Math.abs(restTop - next) > 4) {
-                settleActiveRef.current = true;
-                settleFromRef.current = next;
-                settleStartMsRef.current = now;
-                targetRef_.current = restTop;
-              }
-            }
-          }
-        }
+        velocityRef.current = dt > 0 ? (next - prevY) / dt : 0;
       }
 
       if (Math.abs(scrollYRef.current - window.scrollY) > 0.5) {
@@ -188,9 +191,22 @@ export function ScrollConductor() {
       }
       syncProgressFromScrollY(scrollYRef.current);
 
+      const idleMs = now - lastInputMsRef.current;
       const dist = Math.abs(targetRef_.current - scrollYRef.current);
-      if (dist < 0.25 && !jumpRef.current && !settleActiveRef.current) {
-        escapeAccumRef.current = Math.max(0, escapeAccumRef.current - 0.02);
+
+      // Only decay escape after input fully stops — prevents slow/fast oscillation at arch docks.
+      if (
+        idleMs > ESCAPE_IDLE_DECAY_MS &&
+        dist < 0.5 &&
+        !jumpRef.current &&
+        keyboardFramesRef.current === 0
+      ) {
+        escapeAccumRef.current = Math.max(0, escapeAccumRef.current - 0.04);
+        if (escapeAccumRef.current <= 0) escapeDirRef.current = 0;
+      }
+
+      if (idleMs > ESCAPE_IDLE_DECAY_MS) {
+        keyboardFramesRef.current = 0;
       }
 
       rafRef.current = requestAnimationFrame(tick);
@@ -201,7 +217,7 @@ export function ScrollConductor() {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const delta = e.deltaMode === 1 ? e.deltaY * WHEEL_LINE_PX : e.deltaY;
-      addDelta(delta);
+      addDelta(delta, 'wheel');
     };
 
     let touchY = 0;
@@ -214,7 +230,7 @@ export function ScrollConductor() {
       const y = e.touches[0]?.clientY ?? touchY;
       const delta = touchY - y;
       touchY = y;
-      addDelta(delta * 1.4);
+      addDelta(delta * 1.4, 'touch');
     };
 
     window.addEventListener('wheel', onWheel, { passive: false });

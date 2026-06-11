@@ -724,16 +724,6 @@ export const ARCH_NODES: readonly ArchNode[] = [
 /** @deprecated Use ARCH_NODES */
 export const ARCH_LAYERS = ARCH_NODES;
 
-/** Satellite anchor — not a full scroll stop. */
-export const ARCH_TARGET_SATELLITE = {
-  id: 'targets',
-  label: 'Target Systems',
-  role: 'Authorized hosts, apps, and subnets under test',
-  detail: 'In-scope assets only',
-  plane: 'edge' as const,
-  accent: 'amber' as AccentKey,
-};
-
 /** Named data paths rendered as animated arcs through the diagram. */
 export const ARCH_CONNECTIONS: readonly ArchConnection[] = [
   { from: 'console', to: 'api', label: 'Requests & updates', direction: 'bidirectional', accent: 'cyan', stream: 'sync' },
@@ -741,8 +731,6 @@ export const ARCH_CONNECTIONS: readonly ArchConnection[] = [
   { from: 'queue', to: 'dispatcher', label: 'Ready to route', direction: 'down', accent: 'purple', stream: 'command' },
   { from: 'dispatcher', to: 'channel', label: 'Dispatch to edge', direction: 'down', accent: 'mint', stream: 'command' },
   { from: 'channel', to: 'agent', label: 'Signed command', direction: 'down', accent: 'mint', stream: 'command' },
-  { from: 'agent', to: 'targets', label: 'In-scope assessment', direction: 'down', accent: 'mint', stream: 'command' },
-  { from: 'targets', to: 'agent', label: 'Raw telemetry', direction: 'up', accent: 'amber', stream: 'telemetry' },
   { from: 'agent', to: 'storage', label: 'Upload artifacts', direction: 'down', accent: 'mint', stream: 'artifact' },
   { from: 'storage', to: 'ingestion', label: 'Deliver for parsing', direction: 'up', accent: 'purple', stream: 'artifact' },
   { from: 'ingestion', to: 'api', label: 'Structured findings', direction: 'up', accent: 'purple', stream: 'correlation' },
@@ -752,7 +740,7 @@ export const ARCH_CONNECTIONS: readonly ArchConnection[] = [
 ] as const;
 
 /** Primary forward edges used during depth-first traverse (node i → node i+1). */
-export const ARCH_TRAVERSE_EDGES: readonly number[] = [0, 1, 2, 3, 4, 7, 8, 9, 10, 11] as const;
+export const ARCH_TRAVERSE_EDGES: readonly number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 /* ----------------------------------------------------------------------------
  * Key-feature act data — drives the six dedicated 3D scenes + info cards.

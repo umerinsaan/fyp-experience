@@ -29,6 +29,7 @@ interface ExperienceContextValue {
   conductorEnabled: boolean;
   scrollToProgress: (p: number, opts?: ScrollJumpOpts) => void;
   scrollByDelta: (px: number) => void;
+  endKeyboardScroll: () => void;
   registerConductor: (bridge: ScrollConductorBridge | null) => void;
   /** Publish progress from a physical scrollY (conductor rAF). */
   syncProgressFromScrollY: (scrollY: number) => void;
@@ -86,7 +87,7 @@ export function ExperienceProvider({
   const scrollByDelta = useCallback(
     (px: number) => {
       if (conductorEnabled && conductorRef.current) {
-        conductorRef.current.addDelta(px);
+        conductorRef.current.addDelta(px, 'keyboard');
         return;
       }
       window.scrollBy({ top: px, behavior: 'instant' });
@@ -94,6 +95,12 @@ export function ExperienceProvider({
     },
     [conductorEnabled, syncFromScroll],
   );
+
+  const endKeyboardScroll = useCallback(() => {
+    if (conductorEnabled && conductorRef.current) {
+      conductorRef.current.endKeyboardScroll();
+    }
+  }, [conductorEnabled]);
 
   const scrollToProgress = useCallback(
     (p: number, opts?: ScrollJumpOpts) => {
@@ -150,6 +157,7 @@ export function ExperienceProvider({
       conductorEnabled,
       scrollToProgress,
       scrollByDelta,
+      endKeyboardScroll,
       registerConductor,
       syncProgressFromScrollY,
       targetRef,
@@ -161,6 +169,7 @@ export function ExperienceProvider({
       conductorEnabled,
       scrollToProgress,
       scrollByDelta,
+      endKeyboardScroll,
       registerConductor,
       syncProgressFromScrollY,
       targetRef,

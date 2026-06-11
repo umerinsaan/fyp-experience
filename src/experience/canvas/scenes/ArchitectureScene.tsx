@@ -40,7 +40,7 @@ import {
 
 } from '@/experience/canvas/scenes/architecture-layout';
 
-import { ACCENTS, ARCH_CONNECTIONS, ARCH_NODES, ARCH_TARGET_SATELLITE } from '@/experience/narrative';
+import { ACCENTS, ARCH_CONNECTIONS, ARCH_NODES } from '@/experience/narrative';
 
 import { clamp01 } from '@/story/scroll-math';
 
@@ -63,12 +63,6 @@ const TUBE_R = 0.028;
 const DOCK_FONT = 0.105;
 
 const WIDE_FONT = 0.28;
-
-const SAT_RADIUS = NODE_RADIUS * 0.42;
-
-const SAT_FONT = 0.082;
-
-
 
 type TroikaText = THREE.Object3D & {
   fillOpacity: number;
@@ -176,30 +170,7 @@ export function ArchitectureScene({
 
   );
 
-  const satelliteGeos = useMemo(
-
-    () => ({
-
-      fill: new THREE.CircleGeometry(SAT_RADIUS * 0.9, 32),
-
-      ring: new THREE.RingGeometry(SAT_RADIUS * 0.94, SAT_RADIUS * 1.04, 32),
-
-    }),
-
-    [],
-
-  );
-
-  const satelliteGroupRef = useRef<THREE.Group>(null);
-
-  const satFillMatRef = useRef<THREE.MeshBasicMaterial | null>(null);
-
-  const satRingMatRef = useRef<THREE.MeshBasicMaterial | null>(null);
-
-  const satLabelRef = useRef<TroikaText | null>(null);
-
   useFrame(() => {
-
     const group = groupRef.current;
 
     if (!group) return;
@@ -367,62 +338,6 @@ export function ArchitectureScene({
       mat.color.copy(edgeAccent);
 
       mat.opacity = edgeAlpha * (isOutgoing ? 0.78 : allActive ? 0.82 : 0.58);
-
-    }
-
-
-
-    const satGroup = satelliteGroupRef.current;
-
-    if (satGroup) {
-
-      const targetsPos = NODE_POS.targets;
-
-      if (diagramAlpha < 0.03 || !targetsPos) {
-
-        satGroup.visible = false;
-
-      } else {
-
-        satGroup.visible = true;
-
-        satGroup.position.copy(targetsPos);
-
-        const satAlpha = pres.value * diagramAlpha;
-
-        const satAccent = ACCENTS[ARCH_TARGET_SATELLITE.accent];
-
-        if (satFillMatRef.current) {
-
-          satFillMatRef.current.opacity = satAlpha * 0.94;
-
-          satFillMatRef.current.transparent = satAlpha < 0.995;
-
-        }
-
-        if (satRingMatRef.current) {
-
-          satRingMatRef.current.color.set(satAccent);
-
-          satRingMatRef.current.opacity = satAlpha * (allActive ? 0.82 : 0.68);
-
-        }
-
-        if (satLabelRef.current && 'sync' in satLabelRef.current) {
-
-          satLabelRef.current.fontSize = allActive ? SAT_FONT * 1.4 : SAT_FONT;
-
-          const satFill = satAlpha * (allActive ? 1 : 0.72);
-
-          satLabelRef.current.fillOpacity = satFill;
-
-          satLabelRef.current.outlineOpacity = satFill * (allActive ? 0.95 : 0);
-
-          satLabelRef.current.sync();
-
-        }
-
-      }
 
     }
 
@@ -637,102 +552,6 @@ export function ArchitectureScene({
         </group>
 
       ))}
-
-
-
-      <group ref={satelliteGroupRef} visible={false} renderOrder={9}>
-
-        <mesh geometry={satelliteGeos.fill} renderOrder={9}>
-
-          <meshBasicMaterial
-
-            ref={satFillMatRef}
-
-            color="#ffffff"
-
-            transparent
-
-            opacity={0}
-
-            fog={false}
-
-            depthWrite
-
-            depthTest
-
-            alphaTest={0.08}
-
-          />
-
-        </mesh>
-
-        <mesh geometry={satelliteGeos.ring} renderOrder={10}>
-
-          <meshBasicMaterial
-
-            ref={satRingMatRef}
-
-            color={ACCENTS.amber}
-
-            transparent
-
-            opacity={0}
-
-            fog={false}
-
-            side={THREE.DoubleSide}
-
-            depthWrite
-
-            depthTest
-
-            alphaTest={0.08}
-
-          />
-
-        </mesh>
-
-        <Text
-
-          ref={(el) => {
-
-            satLabelRef.current = el as TroikaText | null;
-
-          }}
-
-          font={FONT_DISPLAY_3D}
-
-          fontSize={SAT_FONT}
-
-          color={LABEL}
-
-          anchorX="center"
-
-          anchorY="middle"
-
-          maxWidth={SAT_RADIUS * 2.4}
-
-          textAlign="center"
-
-          fillOpacity={0}
-
-          outlineWidth={0.014}
-
-          outlineColor="#f8fafc"
-
-          outlineOpacity={0}
-
-          lineHeight={1.05}
-
-          renderOrder={19}
-
-        >
-
-          Targets
-
-        </Text>
-
-      </group>
 
 
 
