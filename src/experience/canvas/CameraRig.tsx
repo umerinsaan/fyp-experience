@@ -14,6 +14,7 @@ import * as THREE from 'three';
 
 import { sampleCameraPose } from '@/experience/act-model';
 import { architectureCameraDampStrength } from '@/experience/architecture-phases';
+import { globalCameraDampBoost } from '@/experience/scroll-rest-points';
 
 
 
@@ -44,7 +45,7 @@ export function CameraRig({ progressRef }: CameraRigProps) {
     const p = progressRef.current;
     const pose = sampleCameraPose(p);
 
-    const dampStrength = architectureCameraDampStrength(p);
+    const dampStrength = Math.max(architectureCameraDampStrength(p), globalCameraDampBoost(p));
     const damp = 1 - Math.exp(-dampStrength * Math.min(delta, 0.05));
 
 

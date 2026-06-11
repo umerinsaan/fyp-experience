@@ -32,6 +32,8 @@ import { FinaleOverlay } from '@/experience/overlays/FinaleOverlay';
 import { VivaDemoDriver } from '@/experience/viva/VivaDemoDriver';
 import { VivaShipCheck } from '@/experience/viva/VivaShipCheck';
 import { KeyboardNavDriver } from '@/experience/KeyboardNavDriver';
+import { ScrollConductor } from '@/experience/ScrollConductor';
+import { ActTransitions } from '@/experience/overlays/ActTransitions';
 import { Chrome } from '@/experience/ui/Chrome';
 import { EXPERIENCE_SCROLL_VH } from '@/experience/narrative';
 
@@ -68,6 +70,8 @@ function Stage({ reduced }: { reduced: boolean }) {
       <DashboardOverlay progress={progress} />
       <FutureWorkOverlay progress={progress} />
       <FinaleOverlay progress={progress} />
+      <ActTransitions progress={progress} />
+      <ScrollConductor />
       <VivaDemoDriver />
       <KeyboardNavDriver />
       <VivaShipCheck />
@@ -80,7 +84,7 @@ export function ExperienceRoot() {
   const reduce = useReducedMotion();
 
   return (
-    <ExperienceProvider targetRef={rootRef}>
+    <ExperienceProvider targetRef={rootRef} conductorEnabled={!reduce}>
       <section
         ref={rootRef}
         className="exp-root"

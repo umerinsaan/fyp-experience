@@ -49,6 +49,20 @@ export function dampFactor(lambda: number, delta: number): number {
  * Used by overlays via function-form `useTransform` so they stay JS-driven and
  * in perfect lockstep with the 3D (no native ScrollTimeline offloading).
  */
+/** Shared cinematic easing — matches overlay lift curves. */
+export const FILM_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+export const SMOOTH_LAMBDA = 14;
+export const JUMP_DURATION_MS = 750;
+export const CHROME_PROGRESS_MS = 120;
+
+/** Overlay CSS transition when conductor drives 60fps progress (avoids double-smoothing). */
+export function overlayMotionTransition(reduce: boolean, conductorEnabled: boolean): string {
+  if (reduce) return 'none';
+  if (conductorEnabled) return 'none';
+  return `opacity 0.16s ease-out, transform 0.42s ${FILM_EASE}`;
+}
+
 export function interp(x: number, stops: number[], values: number[]): number {
   if (x <= stops[0]) return values[0];
   const n = stops.length;

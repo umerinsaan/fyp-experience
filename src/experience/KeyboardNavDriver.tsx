@@ -23,7 +23,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
 }
 
 export function KeyboardNavDriver() {
-  const { scrollToProgress } = useExperience();
+  const { scrollToProgress, scrollByDelta } = useExperience();
   const activeKeysRef = useRef(new Set<string>());
   const rafRef = useRef(0);
   const lastFrameRef = useRef(0);
@@ -41,7 +41,7 @@ export function KeyboardNavDriver() {
         if (keys.has('ArrowUp')) delta -= SCROLL_SPEED_PX * dt;
 
         if (delta !== 0) {
-          window.scrollBy({ top: delta, behavior: 'instant' });
+          scrollByDelta(delta);
         }
       } else {
         lastFrameRef.current = 0;
@@ -65,12 +65,12 @@ export function KeyboardNavDriver() {
       switch (e.key) {
         case 'PageDown': {
           e.preventDefault();
-          window.scrollBy({ top: window.innerHeight * 0.88, behavior: 'smooth' });
+          scrollByDelta(window.innerHeight * 0.88);
           break;
         }
         case 'PageUp': {
           e.preventDefault();
-          window.scrollBy({ top: -window.innerHeight * 0.88, behavior: 'smooth' });
+          scrollByDelta(-window.innerHeight * 0.88);
           break;
         }
         case 'Home': {
@@ -116,7 +116,7 @@ export function KeyboardNavDriver() {
       window.removeEventListener('blur', onBlur);
       activeKeysRef.current.clear();
     };
-  }, [scrollToProgress]);
+  }, [scrollToProgress, scrollByDelta]);
 
   return null;
 }

@@ -4,11 +4,13 @@
 
  */
 
-import { useMotionValueEvent, type MotionValue } from 'framer-motion';
+import { useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 
 import { useCallback, useState } from 'react';
 
 import { keyFeatureByActId } from '@/content/key-features';
+
+import { useExperience } from '@/experience/ExperienceContext';
 
 import { actWindowById } from '@/experience/act-model';
 
@@ -16,7 +18,7 @@ import { FeatureScreenshot } from '@/experience/overlays/FeatureScreenshot';
 
 import { ACTS, ACCENTS, type ActId } from '@/experience/narrative';
 
-import { interp } from '@/story/scroll-math';
+import { interp, overlayMotionTransition } from '@/story/scroll-math';
 
 
 
@@ -43,6 +45,10 @@ function showcaseOpacity(p: number, start: number, end: number): number {
 
 
 export function FeatureShowcase({ progress, actId }: FeatureShowcaseProps) {
+
+  const reduce = useReducedMotion();
+
+  const { conductorEnabled } = useExperience();
 
   const feature = keyFeatureByActId(actId);
 
@@ -95,6 +101,8 @@ export function FeatureShowcase({ progress, actId }: FeatureShowcaseProps) {
         opacity,
 
         transform: `translateX(-50%) translateY(${lift}px)`,
+
+        transition: overlayMotionTransition(!!reduce, conductorEnabled),
 
         ['--feat-accent' as string]: ACCENTS[accent],
 

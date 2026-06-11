@@ -42,7 +42,7 @@ export function ChapterRail() {
           onDoubleClick={(e) => {
             e.preventDefault();
             clearClickTimer();
-            scrollToProgress(actHighlightProgress(act.id));
+            scrollToProgress(actHighlightProgress(act.id), { smooth: true });
             showVivaToast(actHighlightLabel(act.id));
           }}
         >

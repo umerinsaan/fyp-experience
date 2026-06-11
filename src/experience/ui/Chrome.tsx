@@ -15,6 +15,7 @@ import { useExperience } from '@/experience/ExperienceContext';
 import { ChapterRail } from '@/experience/ui/ChapterRail';
 
 import { ACTS, PROJECT_META } from '@/experience/narrative';
+import { CHROME_PROGRESS_MS } from '@/story/scroll-math';
 
 
 
@@ -126,7 +127,14 @@ export function Chrome() {
 
 
 
-      <div className="exp-progress" style={{ width: `${pct * 100}%` }} aria-hidden />
+      <div
+        className="exp-progress"
+        style={{
+          width: `${pct * 100}%`,
+          transition: reduce ? 'none' : `width ${CHROME_PROGRESS_MS}ms linear`,
+        }}
+        aria-hidden
+      />
 
 
 

@@ -8,11 +8,13 @@ import { useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-
 
 import { useCallback, useState } from 'react';
 
+import { useExperience } from '@/experience/ExperienceContext';
+
 import { actWindowById } from '@/experience/act-model';
 
 import { FUTURE_FINALE_FADE, FUTURE_FINALE_IN } from '@/experience/future-work-phases';
 
-import { clamp01, interp } from '@/story/scroll-math';
+import { clamp01, interp, overlayMotionTransition } from '@/story/scroll-math';
 
 
 
@@ -27,6 +29,8 @@ function finaleOpacity(local: number): number {
 export function FinaleOverlay({ progress }: { progress: MotionValue<number> }) {
 
   const reduce = useReducedMotion();
+
+  const { conductorEnabled } = useExperience();
 
   const { start, end } = actWindowById('future-work');
 
@@ -86,7 +90,7 @@ export function FinaleOverlay({ progress }: { progress: MotionValue<number> }) {
 
         transform: `translateY(${lift}px)`,
 
-        transition: reduce ? 'none' : 'opacity 0.22s ease-out, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)',
+        transition: overlayMotionTransition(!!reduce, conductorEnabled),
 
       }}
 

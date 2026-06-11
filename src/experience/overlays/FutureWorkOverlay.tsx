@@ -4,6 +4,7 @@
  */
 import { useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import { useCallback, useState } from 'react';
+import { useExperience } from '@/experience/ExperienceContext';
 import { actWindowById } from '@/experience/act-model';
 import {
   FUTURE_LIST_FADE,
@@ -12,7 +13,7 @@ import {
   FUTURE_LIST_OUT_START,
 } from '@/experience/future-work-phases';
 import { FUTURE_WORK_ITEMS } from '@/experience/narrative';
-import { clamp01, interp } from '@/story/scroll-math';
+import { clamp01, interp, overlayMotionTransition } from '@/story/scroll-math';
 
 function panelOpacity(local: number): number {
   const range = [FUTURE_LIST_IN, FUTURE_LIST_IN + FUTURE_LIST_FADE, FUTURE_LIST_OUT_START, FUTURE_LIST_OUT];
@@ -32,6 +33,7 @@ function itemOpacity(local: number, index: number): number {
 
 export function FutureWorkOverlay({ progress }: { progress: MotionValue<number> }) {
   const reduce = useReducedMotion();
+  const { conductorEnabled } = useExperience();
   const { start, end } = actWindowById('future-work');
   const span = end - start;
 
@@ -64,7 +66,7 @@ export function FutureWorkOverlay({ progress }: { progress: MotionValue<number> 
       style={{
         opacity,
         transform: `translateY(${lift}px)`,
-        transition: reduce ? 'none' : 'opacity 0.18s ease-out, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1)',
+        transition: overlayMotionTransition(!!reduce, conductorEnabled),
       }}
       aria-hidden
     >

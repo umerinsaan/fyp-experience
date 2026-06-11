@@ -4,9 +4,10 @@
  */
 import { useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import { useState } from 'react';
+import { useExperience } from '@/experience/ExperienceContext';
 import type { Beat } from '@/experience/narrative';
 import type { BeatWindow } from '@/experience/act-model';
-import { interp } from '@/story/scroll-math';
+import { interp, overlayMotionTransition } from '@/story/scroll-math';
 
 type Align = 'center' | 'bottom' | 'left' | 'top';
 
@@ -46,6 +47,7 @@ function beatOpacity(p: number, win: BeatWindow): number {
 
 export function CinematicBeat({ progress, beat, win, align }: CinematicBeatProps) {
   const reduce = useReducedMotion();
+  const { conductorEnabled } = useExperience();
   const weight = beat.weight ?? 'lead';
   const [opacity, setOpacity] = useState(() => beatOpacity(progress.get(), win));
 
@@ -73,7 +75,7 @@ export function CinematicBeat({ progress, beat, win, align }: CinematicBeatProps
       style={{
         opacity,
         transform: `translateY(${lift}px) scale(${scale})`,
-        transition: reduce ? 'none' : 'opacity 0.16s ease-out, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)',
+        transition: overlayMotionTransition(!!reduce, conductorEnabled),
       }}
     >
       <div className="exp-beat__inner">
