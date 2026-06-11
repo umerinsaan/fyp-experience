@@ -9,18 +9,18 @@ import { ACTS, type ActId } from '@/experience/narrative';
 import { beatWindow } from '@/experience/act-model';
 import { CinematicBeat } from '@/experience/overlays/CinematicBeat';
 
-/** Acts whose copy is rendered here. Hero (HeroTitle), Impact + Vision have
- * bespoke overlays. */
+/** Acts whose copy is rendered here. Hero (HeroTitle) has a bespoke overlay. */
 const ALIGN: Partial<Record<ActId, 'center' | 'bottom' | 'left' | 'top'>> = {
   problem: 'bottom',
   cost: 'center',
   objective: 'center',
-  workflow: 'bottom',
-  agent: 'bottom',
   jobs: 'top',
   pipeline: 'top',
-  mitre: 'top',
-  smart: 'top',
+  suggestions: 'top',
+  rbac: 'top',
+  reports: 'top',
+  dashboard: 'top',
+  'future-work': 'center',
 };
 
 export function ActCopy({ progress }: { progress: MotionValue<number> }) {

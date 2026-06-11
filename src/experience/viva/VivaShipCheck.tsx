@@ -3,8 +3,6 @@
  */
 import { useEffect, useRef } from 'react';
 import { usePreload } from '@/app/PreloadContext';
-import { showVivaToast } from '@/experience/viva/viva-toast';
-import { VIVA_CONTROLS_ENABLED } from '@/experience/viva/viva-config';
 import { FONT_DISPLAY_3D } from '@/content/asset-manifest';
 
 async function waitForCanvas(timeoutMs = 8000): Promise<HTMLCanvasElement | null> {
@@ -69,10 +67,8 @@ export function VivaShipCheck() {
       const tag = '[fyp-viva]';
       if (ok) {
         console.info(`${tag} Ship check passed\n  · ${lines.join('\n  · ')}`);
-        if (VIVA_CONTROLS_ENABLED) showVivaToast('Ready for viva');
       } else {
         console.warn(`${tag} Ship check issues\n  · ${lines.join('\n  · ')}`);
-        if (VIVA_CONTROLS_ENABLED) showVivaToast('Check console — ship warnings');
       }
     });
   }, [ready, canvasReady]);

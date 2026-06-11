@@ -10,7 +10,7 @@ export interface ExperiencePerfCaps {
   ecosystemBoot: number;
   /** Scales active stream instances (0..1). */
   streamDensity: number;
-  workflowPacketCount: number;
+  technologiesParticleCount: number;
   agentOrbitCount: number;
   enablePostFx: boolean;
   /** Scale instanced city + heavy effects. */
@@ -21,7 +21,7 @@ const FULL: ExperiencePerfCaps = {
   ecosystemMax: ECOSYSTEM_MAX,
   ecosystemBoot: ECOSYSTEM_BOOT,
   streamDensity: 1,
-  workflowPacketCount: 20,
+  technologiesParticleCount: 24,
   agentOrbitCount: AGENT_ORBIT_COUNT,
   enablePostFx: true,
   visualDensity: 1,
@@ -31,7 +31,7 @@ const REDUCED: ExperiencePerfCaps = {
   ecosystemMax: 768,
   ecosystemBoot: 200,
   streamDensity: 0.52,
-  workflowPacketCount: 10,
+  technologiesParticleCount: 10,
   agentOrbitCount: 8,
   enablePostFx: false,
   visualDensity: 0.72,
@@ -42,7 +42,7 @@ const VIVA_LITE: ExperiencePerfCaps = {
   ecosystemMax: 1280,
   ecosystemBoot: 320,
   streamDensity: 0.78,
-  workflowPacketCount: 14,
+  technologiesParticleCount: 16,
   agentOrbitCount: 12,
   enablePostFx: true,
   visualDensity: 0.88,

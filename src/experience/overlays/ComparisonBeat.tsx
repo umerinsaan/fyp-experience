@@ -47,8 +47,9 @@ export function ComparisonBeat({ progress }: { progress: MotionValue<number> }) 
             {ROWS.map((r, i) => (
               <li
                 key={r.before}
+                className="exp-compare__row"
                 style={{
-                  opacity: 0.45 + rowOps[i] * 0.35,
+                  opacity: rowOps[i],
                   transform: `translateX(${(1 - rowOps[i]) * -8}px)`,
                 }}
               >
@@ -60,13 +61,13 @@ export function ComparisonBeat({ progress }: { progress: MotionValue<number> }) 
         <span className="exp-compare__sep" aria-hidden>
           →
         </span>
-        <div className="exp-compare__col exp-compare__col--after">
+        <div className="exp-compare__col">
           <span className="exp-compare__heading">This platform</span>
           <ul>
             {ROWS.map((r, i) => (
               <li
                 key={r.after}
-                className="exp-compare__after-row"
+                className="exp-compare__row"
                 style={{
                   opacity: rowOps[i],
                   transform: `translateX(${(1 - rowOps[i]) * 8}px)`,

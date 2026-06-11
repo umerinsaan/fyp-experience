@@ -14,10 +14,6 @@ import { useExperience } from '@/experience/ExperienceContext';
 
 import { ChapterRail } from '@/experience/ui/ChapterRail';
 
-import { SoundToggle } from '@/experience/ui/SoundToggle';
-
-import { VIVA_CONTROLS_ENABLED } from '@/experience/viva/viva-config';
-
 import { ACTS, PROJECT_META } from '@/experience/narrative';
 
 
@@ -133,20 +129,6 @@ export function Chrome() {
       <div className="exp-progress" style={{ width: `${pct * 100}%` }} aria-hidden />
 
 
-
-      <SoundToggle />
-
-
-
-      {VIVA_CONTROLS_ENABLED ? (
-
-        <p className="exp-viva-chip" title="Keyboard: arrows/space scroll, PgUp/PgDn page, 1-9 jump, Alt+1-9 demo">
-
-          <kbd>↑↓</kbd> scroll · <kbd>PgDn</kbd> page · <kbd>1</kbd>–<kbd>9</kbd> jump · <kbd>Alt</kbd>+<kbd>1</kbd>–<kbd>9</kbd> demo
-
-        </p>
-
-      ) : null}
 
     </div>
 

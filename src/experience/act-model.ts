@@ -52,6 +52,16 @@ import {
   OBJ_UNIFY_OUT_START,
 } from '@/experience/objective-phases';
 import {
+  FUTURE_BRIDGE_FADE,
+  FUTURE_BRIDGE_IN,
+  FUTURE_BRIDGE_OUT,
+  FUTURE_BRIDGE_OUT_START,
+  FUTURE_QUOTE_FADE,
+  FUTURE_QUOTE_IN,
+  FUTURE_QUOTE_OUT,
+  FUTURE_QUOTE_OUT_START,
+} from '@/experience/future-work-phases';
+import {
   CHAOS_COPY_FADE,
   CHAOS_COPY_IN,
   CHAOS_COPY_OUT,
@@ -302,8 +312,29 @@ export function beatWindow(actId: ActId, index: number, count: number): BeatWind
       };
     }
   }
+  // Future work — quote, bridge line, then panel + credits (see future-work-phases.ts).
+  if (actId === 'future-work') {
+    if (index === 0) {
+      const inStart = w.start + span * FUTURE_QUOTE_IN;
+      return {
+        inStart,
+        inEnd: inStart + span * FUTURE_QUOTE_FADE,
+        outStart: w.start + span * FUTURE_QUOTE_OUT_START,
+        outEnd: w.start + span * FUTURE_QUOTE_OUT,
+      };
+    }
+    if (index === 1) {
+      const inStart = w.start + span * FUTURE_BRIDGE_IN;
+      return {
+        inStart,
+        inEnd: inStart + span * FUTURE_BRIDGE_FADE,
+        outStart: w.start + span * FUTURE_BRIDGE_OUT_START,
+        outEnd: w.start + span * FUTURE_BRIDGE_OUT,
+      };
+    }
+  }
   // Architecture finale lines — synced to wide/finale sub-phases (see architecture-phases.ts).
-  if (actId === 'architecture' && count >= 4) {
+  if (actId === 'architecture' && count >= 3) {
     if (index === count - 2) {
       return {
         inStart: w.start + span * 0.9,
@@ -313,25 +344,6 @@ export function beatWindow(actId: ActId, index: number, count: number): BeatWind
       };
     }
     if (index === count - 1) {
-      return {
-        inStart: w.start + span * 0.94,
-        inEnd: w.start + span * 0.96,
-        outStart: w.end - span * 0.012,
-        outEnd: w.end + 0.0001,
-      };
-    }
-  }
-  // Legacy architecture finale (5-beat acts).
-  if (actId === 'architecture' && count >= 5) {
-    if (index === 3) {
-      return {
-        inStart: w.start + span * 0.9,
-        inEnd: w.start + span * 0.93,
-        outStart: w.start + span * 0.95,
-        outEnd: w.start + span * 0.97,
-      };
-    }
-    if (index === 4) {
       return {
         inStart: w.start + span * 0.94,
         inEnd: w.start + span * 0.96,
@@ -399,34 +411,15 @@ const CAMERA_KEYS: readonly CameraKey[] = [
   { at: W('objective').end - 0.008, pos: [0, 0.4, 10.5], look: [0, 0, -3.8], fov: 36 },
   // Architecture — delegated to architecture-camera.ts (depth-first node tour).
   { at: W('architecture').end, pos: [0, 0.4, 11.0], look: [0, -0.05, -3.8], fov: 38 },
-  // Workflow — settle in front of the ring being assembled.
-  { at: W('workflow').start + 0.02, pos: [0, 0.3, 8.6], look: [0, -0.1, -3.8], fov: 40 },
-  { at: W('workflow').end, pos: [0, 0.5, 8.2], look: [0, -0.2, -3.8], fov: 38 },
-  // Pass 4 — bridge from architecture agent layer into Agent act.
-  { at: W('agent').start, pos: [0.1, -0.15, 7.2], look: [0.2, -0.25, -3.6], fov: 40 },
-  { at: W('agent').start + 0.01, pos: [-1.2, 0.2, 6.4], look: [0.2, -0.2, -3.8], fov: 42 },
-  { at: W('agent').end, pos: [0.8, 0.1, 6.8], look: [-0.2, -0.1, -3.8], fov: 44 },
-  // Jobs — front-on a floating schema panel, gentle push-in as argv resolves.
-  { at: W('jobs').start + 0.01, pos: [0, 0.15, 7.6], look: [0, 0.0, -3.8], fov: 42 },
-  { at: W('jobs').start + 0.55 * (W('jobs').end - W('jobs').start), pos: [0.2, 0.1, 6.6], look: [0, -0.05, -3.9], fov: 40 },
-  { at: W('jobs').end, pos: [-0.3, 0.2, 7.4], look: [0.1, 0.0, -3.8], fov: 43 },
-  // Pipeline — wider to read the DAG; small dolly as fork/join fire.
-  { at: W('pipeline').start + 0.01, pos: [0, 0.7, 9.6], look: [0, 0.05, -4.0], fov: 44 },
-  { at: W('pipeline').start + 0.6 * (W('pipeline').end - W('pipeline').start), pos: [0.5, 0.5, 8.6], look: [0, 0.0, -4.0], fov: 42 },
-  { at: W('pipeline').end, pos: [0, 0.8, 10.2], look: [0, 0.05, -4.0], fov: 45 },
-  // MITRE — start high over the matrix, tilt to perspective as cards arrive.
-  { at: W('mitre').start + 0.01, pos: [0, 2.4, 7.4], look: [0, -0.5, -4.2], fov: 42 },
-  { at: W('mitre').start + 0.5 * (W('mitre').end - W('mitre').start), pos: [0.2, 1.2, 8.0], look: [0, -0.1, -3.9], fov: 41 },
-  { at: W('mitre').end, pos: [0, 0.7, 8.4], look: [0, 0.0, -3.8], fov: 43 },
-  // Smart — calm medium framing on the rule graph.
-  { at: W('smart').start + 0.01, pos: [0, 0.35, 8.0], look: [0, 0.0, -3.8], fov: 42 },
-  { at: W('smart').start + 0.6 * (W('smart').end - W('smart').start), pos: [0.4, 0.3, 7.4], look: [0.05, -0.05, -3.9], fov: 41 },
-  { at: W('smart').end, pos: [0, 0.4, 8.2], look: [0, 0.0, -3.8], fov: 43 },
-  // Impact — open up, bright and confident.
-  { at: W('impact').start + 0.01, pos: [0, 0.4, 9.0], look: [0, 0.0, -3.8], fov: 44 },
-  // Vision — final wide, calm, complete.
-  { at: W('vision').start + 0.01, pos: [0, 0.3, 10.0], look: [0, 0, -3.8], fov: 42 },
-  { at: 1, pos: [0, 0.3, 10.6], look: [0, 0, -3.8], fov: 42 },
+  // Technologies — calm wide frame for stack explosion + two-column list.
+  { at: W('technologies').start + 0.02, pos: [0, 0.3, 9.4], look: [0, -0.05, -3.8], fov: 42 },
+  { at: W('technologies').end, pos: [0, 0.35, 9.0], look: [0, -0.08, -3.8], fov: 40 },
+  // Key features — static calm frame; HTML screenshots + cards are the hero.
+  { at: W('jobs').start + 0.01, pos: [0, 0.35, 9.0], look: [0, 0.0, -3.8], fov: 42 },
+  { at: W('dashboard').end, pos: [0, 0.35, 9.0], look: [0, 0.0, -3.8], fov: 42 },
+  // Future work — calm static frame for roadmap panel and credits.
+  { at: W('future-work').start + 0.01, pos: [0, 0.35, 9.0], look: [0, 0.0, -3.8], fov: 42 },
+  { at: 1, pos: [0, 0.35, 9.0], look: [0, 0, -3.8], fov: 42 },
 ];
 
 const _pos = new THREE.Vector3();

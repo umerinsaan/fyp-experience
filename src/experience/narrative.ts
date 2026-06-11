@@ -6,7 +6,7 @@
  * and a sequence of typographic beats revealed one line at a time.
  *
  * Scroll budget is intentional (see DESIGN: cinematic pacing). Architecture
- * is the climax; the four key-feature acts each get room to breathe; the
+ * is the climax; six key-feature acts follow Technologies; the
  * problem/objective arc sets up why the platform exists.
  */
 
@@ -35,14 +35,14 @@ export type ActId =
   | 'cost'
   | 'objective'
   | 'architecture'
-  | 'workflow'
-  | 'agent'
+  | 'technologies'
   | 'jobs'
   | 'pipeline'
-  | 'mitre'
-  | 'smart'
-  | 'impact'
-  | 'vision';
+  | 'suggestions'
+  | 'rbac'
+  | 'reports'
+  | 'dashboard'
+  | 'future-work';
 
 export interface Beat {
   /** Optional small mono label above the line. */
@@ -55,6 +55,8 @@ export interface Beat {
   accentText?: string;
   /** When true, kicker renders as em-dash attribution below the line (quotes). */
   isQuote?: boolean;
+  /** When true, the line stays on one row (projector headlines). */
+  singleLine?: boolean;
 }
 
 export interface Act {
@@ -73,12 +75,13 @@ export interface Act {
 
 /**
  * Pacing allocation (sums to 1.0):
- * hero .07 · problem .10 · cost .07 · objective .12 · architecture .17
- * · workflow .06 · agent .06 · jobs .08 · pipeline .07 · mitre .08
- * · smart .09 · impact .04 · vision .02
+ * hero .06 · problem .09 · cost .07 · objective .11 · architecture .14
+ * · technologies .22 · jobs .06 · pipeline .06 · suggestions .06
+ * · rbac .06 · reports .06 · dashboard .06 · future-work .07
  *
- * Architecture remains the climax; the four key-feature acts each get a
- * dedicated, meaningful 3D beat.
+ * Architecture remains the climax; six key-feature acts each get a
+ * dedicated scroll chapter with screenshot + info card; future-work
+ * closes the film as Act V.
  */
 export const ACTS: readonly Act[] = [
   {
@@ -87,13 +90,12 @@ export const ACTS: readonly Act[] = [
     name: 'Prologue',
     question: 'What is this?',
     accent: 'cyan',
-    weight: 0.07,
+    weight: 0.06,
     beats: [
       {
-        kicker: 'Below the Surface',
-        text: 'Security work was never meant to feel this fragmented.',
+        kicker: 'Platform Briefing',
+        text: 'Below the Surface',
         weight: 'hero',
-        accentText: 'fragmented',
       },
     ],
   },
@@ -103,7 +105,7 @@ export const ACTS: readonly Act[] = [
     name: 'The Problem',
     question: 'Why is penetration testing painful?',
     accent: 'magenta',
-    weight: 0.1,
+    weight: 0.09,
     beats: [
       {
         kicker: 'Act I — Tool sprawl',
@@ -161,7 +163,7 @@ export const ACTS: readonly Act[] = [
     name: 'Our Objective',
     question: 'So what are we actually trying to do?',
     accent: 'cyan',
-    weight: 0.12,
+    weight: 0.11,
     beats: [
       { kicker: 'Act II — The intent', text: 'We are not replacing the pentester.', weight: 'hero', accentText: 'not replacing' },
       {
@@ -197,7 +199,7 @@ export const ACTS: readonly Act[] = [
     name: 'Architecture',
     question: 'How does the whole system fit together?',
     accent: 'purple',
-    weight: 0.17,
+    weight: 0.14,
     beats: [
       {
         text: 'A single platform — cloud control, edge execution.',
@@ -210,11 +212,6 @@ export const ACTS: readonly Act[] = [
         accentText: 'carries context',
       },
       {
-        text: 'A platform is not a collection of tools.',
-        weight: 'hero',
-        accentText: 'not a collection of tools.',
-      },
-      {
         text: 'It is a shared system of intelligence.',
         weight: 'lead',
         accentText: 'shared system of intelligence.',
@@ -222,34 +219,18 @@ export const ACTS: readonly Act[] = [
     ],
   },
   {
-    id: 'workflow',
+    id: 'technologies',
     numeral: 'III',
-    name: 'Workflow',
-    question: 'What does the workflow become?',
+    name: 'Technologies',
+    question: 'What is the stack built on?',
     accent: 'mint',
-    weight: 0.06,
+    weight: 0.22,
     beats: [
       {
-        kicker: 'Act III — The flow',
-        text: 'Every test becomes one connected flow.',
+        kicker: 'Act III — The stack',
+        text: 'Every layer is a deliberate choice.',
         weight: 'lead',
-        accentText: 'one connected flow.',
-      },
-    ],
-  },
-  {
-    id: 'agent',
-    numeral: 'III',
-    name: 'The Agent',
-    question: 'What does the agent actually do?',
-    accent: 'mint',
-    weight: 0.06,
-    beats: [
-      { kicker: 'Act III — The edge', text: 'At the edge, agents do the work.', weight: 'hero', accentText: 'agents' },
-      {
-        text: 'Dispatched, distributed — reporting back as one.',
-        weight: 'lead',
-        accentText: 'as one.',
+        accentText: 'deliberate choice.',
       },
     ],
   },
@@ -259,7 +240,7 @@ export const ACTS: readonly Act[] = [
     name: 'Jobs Engine',
     question: 'How do hundreds of tools share one system?',
     accent: 'purple',
-    weight: 0.08,
+    weight: 0.06,
     beats: [
       { kicker: 'Act IV — Key feature 01', text: 'We did not hand-code every scan.', weight: 'hero', accentText: 'every scan.' },
       {
@@ -280,9 +261,9 @@ export const ACTS: readonly Act[] = [
     name: 'Pipeline Designer',
     question: 'How do you chain work without code?',
     accent: 'cyan',
-    weight: 0.07,
+    weight: 0.06,
     beats: [
-      { kicker: 'Act IV — Key feature 02', text: 'Draw the engagement as a graph.', weight: 'hero', accentText: 'a graph.' },
+      { kicker: 'Act IV — Key feature 02', text: 'Draw the pipeline as a graph.', weight: 'hero', accentText: 'a graph.' },
       {
         text: 'Fork to run in parallel. Join to wait for proof.',
         weight: 'lead',
@@ -291,39 +272,18 @@ export const ACTS: readonly Act[] = [
     ],
   },
   {
-    id: 'mitre',
+    id: 'suggestions',
     numeral: 'IV',
-    name: 'MITRE & Remediation',
-    question: 'How does a raw finding become a fix?',
-    accent: 'magenta',
-    weight: 0.08,
-    beats: [
-      { kicker: 'Act IV — Key feature 03', text: 'Every finding gets its context.', weight: 'hero', accentText: 'its context.' },
-      {
-        text: 'Mapped to MITRE ATT&CK. Scored by real-world risk.',
-        weight: 'lead',
-        accentText: 'MITRE ATT&CK.',
-      },
-      {
-        text: 'Then matched to a ranked, verifiable remediation.',
-        weight: 'lead',
-        accentText: 'remediation.',
-      },
-    ],
-  },
-  {
-    id: 'smart',
-    numeral: 'IV',
-    name: 'Smart Behavior',
-    question: 'Is it a black box?',
+    name: 'Suggested Next Steps',
+    question: 'What should run next on this asset?',
     accent: 'mint',
-    weight: 0.09,
+    weight: 0.06,
     beats: [
-      { kicker: 'Act IV — Key feature 04', text: 'The platform reasons. You decide.', weight: 'hero', accentText: 'You decide.' },
+      { kicker: 'Act IV — Key feature 03', text: 'Rule-based hints — never a black box.', weight: 'hero', accentText: 'black box.' },
       {
-        text: 'A rule engine suggests the next move — never hides why.',
+        text: 'Playbook hints rank the next safe move for each asset.',
         weight: 'lead',
-        accentText: 'never hides why.',
+        accentText: 'next safe move',
       },
       {
         text: 'Every recommendation traces back to a rule you can read.',
@@ -333,47 +293,281 @@ export const ACTS: readonly Act[] = [
     ],
   },
   {
-    id: 'impact',
-    numeral: 'V',
-    name: 'Impact',
-    question: 'What changes after implementation?',
-    accent: 'amber',
-    weight: 0.04,
+    id: 'rbac',
+    numeral: 'IV',
+    name: 'Live RBAC',
+    question: 'Who can do what — and can you see it?',
+    accent: 'magenta',
+    weight: 0.06,
     beats: [
-      { kicker: 'Act V — The outcome', text: 'Consistent. Repeatable. Fast.', weight: 'hero', accentText: 'Fast.' },
-      { text: 'One source of truth for the whole engagement.', weight: 'lead', accentText: 'One source of truth' },
+      { kicker: 'Act IV — Key feature 04', text: 'Permissions you can see — and edit in place.', weight: 'hero', accentText: 'edit in place.' },
+      {
+        text: 'Toggle Live RBAC overlay — every guarded control highlights on the console.',
+        weight: 'lead',
+        accentText: 'highlights on the console.',
+      },
     ],
   },
   {
-    id: 'vision',
-    numeral: 'V',
-    name: 'Vision',
-    question: 'What does the future look like?',
+    id: 'reports',
+    numeral: 'IV',
+    name: 'Report Library',
+    question: 'How does evidence leave the platform?',
     accent: 'amber',
-    weight: 0.02,
+    weight: 0.06,
     beats: [
       {
-        kicker: 'Act V — The vision',
-        text: 'One platform. One workflow. Shared context.',
+        kicker: 'Act IV — Key feature 05',
+        text: 'Generate once for whole team',
         weight: 'hero',
-        accentText: 'Shared context.',
+        accentText: 'whole team',
+      },
+      {
+        text: 'PDFs render in the background and land in the tenant report library.',
+        weight: 'lead',
+        accentText: 'report library.',
+      },
+    ],
+  },
+  {
+    id: 'dashboard',
+    numeral: 'IV',
+    name: 'Security Posture',
+    question: 'How do you read posture at a glance?',
+    accent: 'cyan',
+    weight: 0.06,
+    beats: [
+      { kicker: 'Act IV — Key feature 06', text: 'Two lenses on the same posture.', weight: 'hero', accentText: 'Two lenses' },
+      {
+        text: 'Assets mode for inventory. Vulnerabilities mode for risk.',
+        weight: 'lead',
+        accentText: 'Assets mode',
+      },
+    ],
+  },
+  {
+    id: 'future-work',
+    numeral: 'V',
+    name: 'Future Work',
+    question: 'What comes next?',
+    accent: 'amber',
+    weight: 0.07,
+    beats: [
+      {
+        text: 'There is always room for improvement.',
+        weight: 'hero',
+        isQuote: true,
+        kicker: 'Continuous improvement',
+      },
+      {
+        text: 'Shipped today — extended tomorrow.',
+        weight: 'lead',
+        accentText: 'extended tomorrow.',
       },
     ],
   },
 ] as const;
 
-/** Technology identifiers rendered as real brand logos on the architecture. */
+/** Act V — forward-looking platform horizons (description only). */
+export interface FutureWorkItem {
+  id: string;
+  label: string;
+  detail: string;
+}
+
+export const FUTURE_WORK_ITEMS: readonly FutureWorkItem[] = [
+  {
+    id: 'ai',
+    label: 'AI-assisted guidance',
+    detail:
+      'Machine-assisted prioritisation and narrative on top of today\'s rule-based playbooks — operator-controlled, not autonomous exploitation.',
+  },
+  {
+    id: 'byok',
+    label: 'Deeper BYOK & tenant crypto',
+    detail:
+      'Extend tenant Bring Your Own Key beyond engagement exports — post-quantum key wrapping, shorter unlock sessions, and production vault hardening.',
+  },
+  {
+    id: 'zerotrust',
+    label: 'Zero trust maturity',
+    detail:
+      'Formal maturity scoring on outbound agents, RBAC, and tenant isolation — mTLS for agents, rate limits, and full observability.',
+  },
+  {
+    id: 'maturity',
+    label: 'Maturity in reports',
+    detail:
+      'Assurance maturity bands and trend lines in executive PDFs — extending today\'s index into longitudinal posture reporting.',
+  },
+  {
+    id: 'assets',
+    label: 'Cloud & extended assets',
+    detail:
+      'Import cloud-deployed workloads and non-LAN assets alongside network-discovered hosts — plus a host agent for endpoint posture.',
+  },
+] as const;
+
+/** Technology identifiers rendered as brand logos across architecture and technologies acts. */
 export type TechId =
   | 'dotnet'
+  | 'csharp'
   | 'angular'
   | 'python'
   | 'signalr'
+  | 'signalrcore'
   | 'keycloak'
   | 'redis'
   | 'minio'
   | 'sqlserver'
   | 'hangfire'
-  | 'docker';
+  | 'docker'
+  | 'primeng'
+  | 'elkjs'
+  | 'mediatr'
+  | 'serilog'
+  | 'requests';
+
+/** Technologies act — one entry per stack choice. */
+export interface TechnologyEntry {
+  key: string;
+  label: string;
+  logos: readonly TechId[];
+  summary: string;
+  impact: string;
+  rationale: string;
+}
+
+export const TECHNOLOGIES: readonly TechnologyEntry[] = [
+  {
+    key: 'angular',
+    label: 'Angular',
+    logos: ['angular'],
+    summary: 'Used in FYP.UI — TypeScript SPA framework for the web console.',
+    impact: 'Lazy routes, forms, and HTTP power every analyst screen.',
+    rationale: 'Enterprise-grade structure with standalone components and long-term support.',
+  },
+  {
+    key: 'primeng',
+    label: 'PrimeNG',
+    logos: ['primeng'],
+    summary: 'Used in FYP.UI — component library for tables, dialogs, and dashboards.',
+    impact: 'Consistent UI widgets across engagements, jobs, and reporting views.',
+    rationale: 'Rich data-heavy components out of the box — less custom CSS for complex views.',
+  },
+  {
+    key: 'elkjs',
+    label: 'ELK.js',
+    logos: ['elkjs'],
+    summary: 'Used in FYP.UI — automatic graph layout for the pipeline designer.',
+    impact: 'Pipeline nodes auto-position into readable DAGs without manual drag alignment.',
+    rationale: 'Layered graph algorithm handles fork/join complexity that hand layout cannot scale.',
+  },
+  {
+    key: 'dotnet-stack',
+    label: '.NET stack',
+    logos: ['csharp', 'dotnet'],
+    summary: 'Used in FYP.Backend — C# on .NET 10 with ASP.NET Core and Entity Framework Core.',
+    impact: 'REST endpoints, auth, migrations, and domain logic share one typed ecosystem.',
+    rationale: 'Mature enterprise stack with first-class async, DI, and EF migrations out of the box.',
+  },
+  {
+    key: 'sqlserver',
+    label: 'SQL Server',
+    logos: ['sqlserver'],
+    summary: 'Used in FYP.Backend — primary relational database for engagements, runs, and findings.',
+    impact: 'All platform state persists in one ACID store with EF Core migrations.',
+    rationale: 'Proven RDBMS with strong tooling — fits multi-tenant relational data models.',
+  },
+  {
+    key: 'redis',
+    label: 'Redis',
+    logos: ['redis'],
+    summary: 'Used in FYP.Backend — in-memory cache, job queue, and SignalR backplane.',
+    impact: 'Scales real-time hubs and absorbs ingest bursts without blocking the API.',
+    rationale: 'Single infra piece covers cache, pub/sub, and queue patterns the platform needs.',
+  },
+  {
+    key: 'hangfire',
+    label: 'Hangfire',
+    logos: ['hangfire'],
+    summary: 'Used in FYP.Backend — background job scheduler backed by SQL Server.',
+    impact: 'Recurring scans, report generation, and ingest run outside the request path.',
+    rationale: 'Reliable scheduling with a dashboard — no custom cron infrastructure required.',
+  },
+  {
+    key: 'keycloak',
+    label: 'Keycloak',
+    logos: ['keycloak'],
+    summary: 'Used in FYP.Backend — OIDC identity provider for console authentication.',
+    impact: 'Analysts sign in via SSO; the BFF holds session cookies — no tokens in the browser.',
+    rationale: 'Standard OIDC with realm import — separates auth from application code.',
+  },
+  {
+    key: 'minio',
+    label: 'MinIO',
+    logos: ['minio'],
+    summary: 'Used in FYP.Backend — S3-compatible object storage for scan artifacts.',
+    impact: 'The Kali agent uploads raw tool output via presigned URLs; ingestion reads from the same bucket.',
+    rationale: 'S3 API without cloud lock-in — works in Docker labs and on-prem deployments.',
+  },
+  {
+    key: 'signalr',
+    label: 'SignalR',
+    logos: ['signalr'],
+    summary: 'Used in FYP.Backend for hubs; FYP.UI and the Kali agent connect as outbound clients.',
+    impact: 'Dispatch reaches the agent instantly; dashboards update live as runs progress.',
+    rationale: 'WebSocket push over outbound connections — no inbound ports required on the scan box.',
+  },
+  {
+    key: 'docker',
+    label: 'Docker',
+    logos: ['docker'],
+    summary: 'Used in FYP.Backend — containerized local infrastructure stack.',
+    impact: 'SQL Server, Redis, MinIO, and Keycloak spin up consistently for dev and lab environments.',
+    rationale: 'One compose file reproduces the full backend dependency graph on any machine.',
+  },
+  {
+    key: 'mediatr',
+    label: 'MediatR',
+    logos: ['mediatr'],
+    summary: 'Used in FYP.Backend — CQRS request/handler pipeline in the application layer.',
+    impact: 'Every API command flows through validated handlers — thin controllers, testable logic.',
+    rationale: 'Decouples HTTP from business rules without a heavyweight framework.',
+  },
+  {
+    key: 'serilog',
+    label: 'Serilog',
+    logos: ['serilog'],
+    summary: 'Used in FYP.Backend — structured logging shipped to Seq.',
+    impact: 'Runs, dispatches, and ingest events are searchable with full context in dev and ops.',
+    rationale: 'Structured logs beat plain text when debugging distributed scan workflows.',
+  },
+  {
+    key: 'python',
+    label: 'Python',
+    logos: ['python'],
+    summary: 'Used in the Kali agent — runtime for scan dispatch and artifact upload.',
+    impact: 'Runs allowlisted scanners and uploads results from inside the customer network.',
+    rationale: 'Fast to ship, rich subprocess tooling, and familiar to security engineers.',
+  },
+  {
+    key: 'signalrcore',
+    label: 'signalrcore',
+    logos: ['signalrcore'],
+    summary: 'Used in the Kali agent — Python SignalR client for outbound hub connection.',
+    impact: 'Receives dispatch, sends heartbeats, and streams run output without inbound ports.',
+    rationale: 'Matches the backend hub protocol — one persistent outbound channel from the scan box.',
+  },
+  {
+    key: 'requests',
+    label: 'requests',
+    logos: ['requests'],
+    summary: 'Used in the Kali agent — HTTP client for enrollment and artifact uploads.',
+    impact: 'Enrolls with the API, fetches presigned URLs, and PUTs scan output to object storage.',
+    rationale: 'Simple, battle-tested HTTP for the few REST calls the agent needs beyond SignalR.',
+  },
+] as const;
 
 /** Semantic packet category — each stream type has distinct motion in the 3D act. */
 export type StreamKind = 'command' | 'telemetry' | 'artifact' | 'finding' | 'correlation' | 'sync';
@@ -560,27 +754,8 @@ export const ARCH_CONNECTIONS: readonly ArchConnection[] = [
 /** Primary forward edges used during depth-first traverse (node i → node i+1). */
 export const ARCH_TRAVERSE_EDGES: readonly number[] = [0, 1, 2, 3, 4, 7, 8, 9, 10, 11] as const;
 
-/** The 8-step engagement workflow used by the Workflow act. */
-export interface WorkflowStep {
-  id: string;
-  label: string;
-  description: string;
-  accent: AccentKey;
-}
-
-export const WORKFLOW_STEPS: readonly WorkflowStep[] = [
-  { id: 'scope', label: 'Scope', description: 'Authorized boundaries — what may be tested, and when.', accent: 'cyan' },
-  { id: 'targets', label: 'Targets', description: 'Assets in scope — hosts, apps, networks at the edge.', accent: 'mint' },
-  { id: 'discovery', label: 'Discovery', description: 'Map the attack surface before deeper assessment.', accent: 'mint' },
-  { id: 'assessment', label: 'Assessment', description: 'Scanners and agents execute, strictly in scope.', accent: 'purple' },
-  { id: 'findings', label: 'Findings', description: 'Issues with severity, evidence, affected assets.', accent: 'magenta' },
-  { id: 'verification', label: 'Verification', description: 'Confirm impact — reduce noise, prove real risk.', accent: 'purple' },
-  { id: 'remediation', label: 'Remediation', description: 'Prioritized fix guidance for owners and teams.', accent: 'amber' },
-  { id: 'reporting', label: 'Reporting', description: 'Executive and technical output, generated once.', accent: 'cyan' },
-] as const;
-
 /* ----------------------------------------------------------------------------
- * Key-feature act data — drives the four dedicated 3D scenes + info cards.
+ * Key-feature act data — drives the six dedicated 3D scenes + info cards.
  * ------------------------------------------------------------------------- */
 
 /** Jobs act — the schema → validate → resolve → dispatch chain. */
@@ -625,9 +800,10 @@ export const JOBS_STAGES: readonly JobsStage[] = [
 
 /** A short list of facts shown on the Jobs feature card. */
 export const JOBS_FACTS: readonly string[] = [
-  '600+ seeded job templates across 18+ tools',
-  'Add a tool by authoring JSON — zero new code paths',
-  'Config profiles store reusable, safe presets',
+  'Job templates ship with JSON Schema, UI schema, and a command template',
+  'Server validates every payload before a run is accepted',
+  'Command preview resolves params into the exact argv the agent runs',
+  'Config profiles store reusable, safe parameter presets',
 ] as const;
 
 /** Pipeline act — DAG node taxonomy + semantics. */
@@ -647,48 +823,14 @@ export const PIPELINE_NODES: readonly PipelineNodeSpec[] = [
 ] as const;
 
 export const PIPELINE_FACTS: readonly string[] = [
-  'Drag, connect, fork and join — no code',
-  'Validated acyclic graph (Kahn) before it can run',
-  'Failure policy per node: fail the run, or continue',
-  'Dispatched wave-by-wave as predecessors succeed',
+  'Interactive canvas: drag templates, connect Start → Job nodes',
+  'ELK.js auto-layout keeps complex DAGs readable',
+  'Client and server both validate acyclic graphs before a run',
+  'Orchestrator dispatches wave-by-wave as predecessors succeed',
 ] as const;
 
-/** MITRE act — finding enrichment mapping (illustrative, drawn from the mapper). */
-export interface MitreMapEntry {
-  signal: string;
-  technique: string;
-  name: string;
-  confidence: 'High' | 'Medium' | 'Low';
-  accent: AccentKey;
-}
-
-export const MITRE_MAP: readonly MitreMapEntry[] = [
-  { signal: 'CWE-89', technique: 'T1190', name: 'Exploit Public-Facing App', confidence: 'High', accent: 'magenta' },
-  { signal: 'port 445', technique: 'T1021.002', name: 'SMB / Windows Admin Shares', confidence: 'Medium', accent: 'purple' },
-  { signal: 'tool: hydra', technique: 'T1110', name: 'Brute Force', confidence: 'Medium', accent: 'cyan' },
-] as const;
-
-export interface RemediationRank {
-  rank: number;
-  title: string;
-  score: number;
-  accent: AccentKey;
-}
-
-export const REMEDIATION_RANKS: readonly RemediationRank[] = [
-  { rank: 1, title: 'Patch to fixed version', score: 100, accent: 'amber' },
-  { rank: 2, title: 'Restrict SMB exposure', score: 70, accent: 'mint' },
-  { rank: 3, title: 'Enforce account lockout', score: 50, accent: 'cyan' },
-] as const;
-
-export const MITRE_FACTS: readonly string[] = [
-  'CWE → ATT&CK, port heuristics, tool patterns',
-  'Priority score blends CVSS · KEV · EPSS · context',
-  'Top-3 remediations, each with a re-scan to verify',
-] as const;
-
-/** Smart-behavior act — rule engine condition → action, with traceability. */
-export interface SmartRule {
+/** Suggestions act — rule engine condition → action, with traceability. */
+export interface SuggestionsRule {
   id: string;
   when: string;
   then: string;
@@ -696,7 +838,7 @@ export interface SmartRule {
   accent: AccentKey;
 }
 
-export const SMART_RULES: readonly SmartRule[] = [
+export const SUGGESTIONS_RULES: readonly SuggestionsRule[] = [
   {
     id: 'playbook',
     when: 'anyOpenPorts: [80, 443] · osContains: "Windows"',
@@ -720,18 +862,33 @@ export const SMART_RULES: readonly SmartRule[] = [
   },
 ] as const;
 
-export const SMART_FACTS: readonly string[] = [
-  'Rule-based — deterministic, auditable, no black box',
-  'Playbook hints rank the next safe move',
-  'Assurance policies gate risky actions',
-  'Every decision traces to a rule you can read',
+export const SUGGESTIONS_FACTS: readonly string[] = [
+  'PlaybookHintsJson on templates — declarative rules, not ML',
+  'Engine scores against asset context: ports, OS, CVEs, recent runs',
+  'Every card shows a relevance score and plain-language reasons',
+  'Coverage-gap recommendations close assurance holes on the asset hub',
 ] as const;
 
-/** Impact metrics shown as kinetic typography in the Impact act. */
-export const IMPACT_METRICS: readonly { value: string; label: string; accent: AccentKey }[] = [
-  { value: '18+', label: 'security tools, one platform', accent: 'amber' },
-  { value: '600+', label: 'job templates, zero custom code', accent: 'mint' },
-  { value: 'One', label: 'workflow — scope to report', accent: 'cyan' },
+export const RBAC_FACTS: readonly string[] = [
+  'Tenant-scoped permission keys — reports.view, jobs.create, rbac.manage',
+  'Server enforces RBAC on every MediatR command, not just UI hiding',
+  'Live RBAC overlay highlights every guarded control on the live console',
+  'Click a control → floating inspector shows the permission; edit grants in place',
+  'RBAC command centre provides the full role × permission matrix',
+] as const;
+
+export const REPORTS_FACTS: readonly string[] = [
+  'Analysts with reports.generate queue PDF/CSV generation asynchronously',
+  'Worker renders, stores artifacts in MinIO, notifies via SignalR when complete',
+  'Any teammate with reports.view opens the same tenant library — no re-generation',
+  'Scoped entry points from engagements, assets, and pipeline runs',
+] as const;
+
+export const DASHBOARD_FACTS: readonly string[] = [
+  'Assets mode: inventory totals, reachability, OS distribution, agent sighting %',
+  'Vulnerabilities mode: severity backlog, risk score, remediation pulse',
+  'Chip toggle switches modes; network scope filter applies to both',
+  'Highest-risk assets list links straight to the asset command centre',
 ] as const;
 
 export const PROJECT_META = {
@@ -741,4 +898,4 @@ export const PROJECT_META = {
 } as const;
 
 /** Total scroll height of the experience, in viewport heights. */
-export const EXPERIENCE_SCROLL_VH = 2200;
+export const EXPERIENCE_SCROLL_VH = 2320;

@@ -10,7 +10,6 @@ import { AccentDriver } from '@/experience/overlays/AccentDriver';
 import { ActCopy } from '@/experience/overlays/ActCopy';
 import { ComparisonBeat } from '@/experience/overlays/ComparisonBeat';
 import { HeroTitle } from '@/experience/overlays/HeroTitle';
-import { ImpactMetrics } from '@/experience/overlays/ImpactMetrics';
 import { ProblemQuestionBeat } from '@/experience/overlays/ProblemQuestionBeat';
 import { ToolSprawlOverlay } from '@/experience/overlays/ToolSprawlOverlay';
 import { ToolOutputsOverlay } from '@/experience/overlays/ToolOutputsOverlay';
@@ -21,15 +20,15 @@ import { CostStitchOverlay } from '@/experience/overlays/CostStitchOverlay';
 import { ObjectiveOrbitOverlay } from '@/experience/overlays/ObjectiveOrbitOverlay';
 import { ArchitectureFinale } from '@/experience/overlays/ArchitectureFinale';
 import { ArchitectureScrimDriver } from '@/experience/overlays/ArchitectureScrimDriver';
-import { VisionFinale } from '@/experience/overlays/VisionFinale';
-import { WorkflowBrief } from '@/experience/overlays/WorkflowBrief';
+import { TechnologiesStack } from '@/experience/overlays/TechnologiesStack';
 import { JobsOverlay } from '@/experience/overlays/JobsOverlay';
 import { PipelineOverlay } from '@/experience/overlays/PipelineOverlay';
-import { MitreOverlay } from '@/experience/overlays/MitreOverlay';
-import { SmartOverlay } from '@/experience/overlays/SmartOverlay';
-import { ArchitectureAudioDriver } from '@/experience/audio/ArchitectureAudioDriver';
-import { HandoffAudioDriver } from '@/experience/audio/HandoffAudioDriver';
-import { LandmarkAudioDriver } from '@/experience/audio/LandmarkAudioDriver';
+import { SuggestionsOverlay } from '@/experience/overlays/SuggestionsOverlay';
+import { RbacOverlay } from '@/experience/overlays/RbacOverlay';
+import { ReportsOverlay } from '@/experience/overlays/ReportsOverlay';
+import { DashboardOverlay } from '@/experience/overlays/DashboardOverlay';
+import { FutureWorkOverlay } from '@/experience/overlays/FutureWorkOverlay';
+import { FinaleOverlay } from '@/experience/overlays/FinaleOverlay';
 import { VivaDemoDriver } from '@/experience/viva/VivaDemoDriver';
 import { VivaShipCheck } from '@/experience/viva/VivaShipCheck';
 import { KeyboardNavDriver } from '@/experience/KeyboardNavDriver';
@@ -60,16 +59,15 @@ function Stage({ reduced }: { reduced: boolean }) {
       <ComparisonBeat progress={progress} />
       <ArchitectureFinale progress={progress} />
       <ArchitectureScrimDriver progress={progress} />
-      <WorkflowBrief progress={progress} />
+      <TechnologiesStack progress={progress} />
       <JobsOverlay progress={progress} />
       <PipelineOverlay progress={progress} />
-      <MitreOverlay progress={progress} />
-      <SmartOverlay progress={progress} />
-      <ImpactMetrics progress={progress} />
-      <VisionFinale progress={progress} />
-      <ArchitectureAudioDriver />
-      <HandoffAudioDriver />
-      <LandmarkAudioDriver />
+      <SuggestionsOverlay progress={progress} />
+      <RbacOverlay progress={progress} />
+      <ReportsOverlay progress={progress} />
+      <DashboardOverlay progress={progress} />
+      <FutureWorkOverlay progress={progress} />
+      <FinaleOverlay progress={progress} />
       <VivaDemoDriver />
       <KeyboardNavDriver />
       <VivaShipCheck />
@@ -87,7 +85,7 @@ export function ExperienceRoot() {
         ref={rootRef}
         className="exp-root"
         style={{ height: `${EXPERIENCE_SCROLL_VH}vh` }}
-        aria-label="Below the Surface — an interactive briefing"
+        aria-label="Below the Surface — platform briefing"
       >
         <div className="exp-sticky">
           <Stage reduced={!!reduce} />

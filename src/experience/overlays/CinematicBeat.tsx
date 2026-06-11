@@ -17,16 +17,26 @@ interface CinematicBeatProps {
   align: Align;
 }
 
-function renderText(beat: Beat) {
-  if (!beat.accentText || !beat.text.includes(beat.accentText)) return beat.text;
-  const [before, after] = beat.text.split(beat.accentText);
+function renderAccentLine(text: string, accentText?: string) {
+  if (!accentText || !text.includes(accentText)) return text;
+  const [before, after] = text.split(accentText);
   return (
     <>
       {before}
-      <span className="exp-accent">{beat.accentText}</span>
+      <span className="exp-accent">{accentText}</span>
       {after}
     </>
   );
+}
+
+function renderText(beat: Beat) {
+  const lines = beat.text.split('\n');
+  if (lines.length === 1) return renderAccentLine(beat.text, beat.accentText);
+  return lines.map((line, i) => (
+    <span key={i} className="exp-line__row">
+      {renderAccentLine(line, beat.accentText)}
+    </span>
+  ));
 }
 
 function beatOpacity(p: number, win: BeatWindow): number {
@@ -68,7 +78,11 @@ export function CinematicBeat({ progress, beat, win, align }: CinematicBeatProps
     >
       <div className="exp-beat__inner">
         {beat.kicker && !beat.isQuote ? <span className="exp-kicker">{beat.kicker}</span> : null}
-        <p className={`exp-line exp-line--${weight}${beat.isQuote ? ' exp-line--quote' : ''}`}>{renderText(beat)}</p>
+        <p
+          className={`exp-line exp-line--${weight}${beat.isQuote ? ' exp-line--quote' : ''}${beat.singleLine ? ' exp-line--single' : ''}`}
+        >
+          {renderText(beat)}
+        </p>
         {beat.kicker && beat.isQuote ? (
           <span className="exp-beat__attribution">— {beat.kicker}</span>
         ) : null}

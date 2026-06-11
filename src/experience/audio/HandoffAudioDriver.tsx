@@ -1,9 +1,8 @@
 /**
- * Pass 5 — audio bridge: architecture finale → workflow → Agent act.
+ * Pass 5 — audio bridge: architecture finale → technologies act.
  */
 import { useMotionValueEvent } from 'framer-motion';
 import { useRef } from 'react';
-import { agentHandoffState } from '@/experience/agent-handoff';
 import {
   architectureGlobalLocal,
   architecturePhase,
@@ -15,8 +14,7 @@ import { useExperience } from '@/experience/ExperienceContext';
 export function HandoffAudioDriver() {
   const { progress } = useExperience();
   const finaleFired = useRef(false);
-  const agentFired = useRef(false);
-  const workflowFlowFired = useRef(false);
+  const technologiesFlowFired = useRef(false);
 
   useMotionValueEvent(progress, 'change', (p) => {
     const engine = getFypAudio();
@@ -33,20 +31,12 @@ export function HandoffAudioDriver() {
       finaleFired.current = false;
     }
 
-    const wf = actWindowById('workflow');
-    if (p >= wf.start + (wf.end - wf.start) * 0.55 && p < wf.end && !workflowFlowFired.current) {
-      workflowFlowFired.current = true;
-      engine.workflowFlow();
+    const tech = actWindowById('technologies');
+    if (p >= tech.start + (tech.end - tech.start) * 0.55 && p < tech.end && !technologiesFlowFired.current) {
+      technologiesFlowFired.current = true;
+      engine.technologiesFlow();
     }
-    if (p < wf.start) workflowFlowFired.current = false;
-
-    const handoff = agentHandoffState(p);
-    const agent = actWindowById('agent');
-    if (p >= agent.start + 0.008 && handoff.morph < 0.35 && !agentFired.current) {
-      agentFired.current = true;
-      engine.agentHandoff();
-    }
-    if (p < agent.start - 0.02) agentFired.current = false;
+    if (p < tech.start) technologiesFlowFired.current = false;
   });
 
   return null;

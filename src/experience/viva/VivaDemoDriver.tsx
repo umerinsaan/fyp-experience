@@ -39,7 +39,7 @@ export function VivaDemoDriver() {
 
       if (!e.altKey || e.ctrlKey || e.metaKey) return;
       const digit = Number(e.key);
-      if (!Number.isInteger(digit) || digit < 1 || digit > 9) return;
+      if (!Number.isInteger(digit) || digit < 0 || digit > 9) return;
 
       e.preventDefault();
       const bookmark = vivaBookmarkByDigit(digit);
@@ -77,7 +77,7 @@ export function VivaDemoDriver() {
             ))}
           </ul>
           <p className="exp-viva-hint__foot">
-            Keys: ↑↓/Space scroll · PgUp/PgDn page · 1–9 jump · Home/End · Alt+1–9 demo
+            Keys: ↑↓/Space scroll · PgUp/PgDn page · 1–9 jump · Home/End · Alt+0–9 demo
           </p>
           <p className="exp-viva-hint__foot">
             Rail: click = act open · double-click = highlight · Press ? to close

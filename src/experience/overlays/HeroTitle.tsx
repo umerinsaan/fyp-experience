@@ -6,25 +6,10 @@ import { motion, useMotionValueEvent, useReducedMotion, type MotionValue } from 
 import { useState } from 'react';
 import { actWindowById } from '@/experience/act-model';
 import { usePreload } from '@/app/PreloadContext';
-import { ACTS } from '@/experience/narrative';
+import { ACCENTS } from '@/experience/narrative';
 import { PROJECT } from '@/content/project';
 import { TITLE_ANCHOR } from '@/content/chapter-pentest';
 import { interp } from '@/story/scroll-math';
-
-const heroAct = ACTS.find((a) => a.id === 'hero')!;
-const hook = heroAct.beats[0];
-
-function renderHook() {
-  if (!hook.accentText || !hook.text.includes(hook.accentText)) return hook.text;
-  const [before, after] = hook.text.split(hook.accentText);
-  return (
-    <>
-      {before}
-      <span className="exp-accent">{hook.accentText}</span>
-      {after}
-    </>
-  );
-}
 
 function TitleLine({ line, revealed, baseDelay }: { line: string; revealed: boolean; baseDelay: number }) {
   const anchorIndex = line.indexOf(TITLE_ANCHOR);
@@ -92,7 +77,7 @@ export function HeroTitle({ progress }: { progress: MotionValue<number> }) {
         animate={revealed ? { opacity: 1 } : { opacity: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
       >
-        An Interactive Briefing
+        Platform Briefing
       </motion.span>
 
       <h1 className="exp-herotitle__title">
@@ -111,14 +96,40 @@ export function HeroTitle({ progress }: { progress: MotionValue<number> }) {
         <span>Final Year Project</span>
       </motion.div>
 
-      <motion.p
-        className="exp-herotitle__hook"
+      <motion.div
+        className="exp-herotitle__team"
         initial={{ opacity: 0 }}
         animate={revealed ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ delay: 0.9, duration: 0.5 }}
+        transition={{ delay: 0.85, duration: 0.55 }}
       >
-        {renderHook()}
-      </motion.p>
+        {PROJECT.members.map((member, i) => (
+          <span key={member.id} className="exp-herotitle__member-wrap">
+            {i > 0 ? <span className="exp-herotitle__member-sep" aria-hidden>·</span> : null}
+            <span className="exp-herotitle__member" style={{ color: ACCENTS[member.accent] }}>
+              {member.name}
+              <span className="exp-herotitle__member-id">{member.id}</span>
+            </span>
+          </span>
+        ))}
+      </motion.div>
+
+      <motion.div
+        className="exp-herotitle__advisors"
+        initial={{ opacity: 0 }}
+        animate={revealed ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ delay: 0.95, duration: 0.55 }}
+      >
+        <div className="exp-herotitle__advisor-card">
+          <span className="exp-herotitle__advisor-label">Supervisor</span>
+          <span className="exp-herotitle__advisor-name">{PROJECT.supervisor.name}</span>
+          <span className="exp-herotitle__advisor-role">{PROJECT.supervisor.role}</span>
+        </div>
+        <div className="exp-herotitle__advisor-card">
+          <span className="exp-herotitle__advisor-label">Co-Supervisor</span>
+          <span className="exp-herotitle__advisor-name">{PROJECT.coSupervisor.name}</span>
+          <span className="exp-herotitle__advisor-role">{PROJECT.coSupervisor.role}</span>
+        </div>
+      </motion.div>
     </div>
   );
 }

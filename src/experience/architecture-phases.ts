@@ -14,7 +14,7 @@
 
  *   wide      → full ecosystem alive; all streams active
 
- *   finale    → headline bridge into workflow
+ *   finale    → headline bridge into technologies
 
  */
 

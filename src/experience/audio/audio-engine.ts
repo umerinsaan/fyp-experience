@@ -7,7 +7,7 @@
  * Layers:
  *  - ambient drone: two detuned oscillators through a lowpass, slow gain LFO.
  *  - act transition: a short filtered-noise "whoosh".
- *  - chime: a soft major chord for landmark moments (impact / vision).
+ *  - chime: a soft major chord for landmark beats.
  */
 
 const ACT_BASE_HZ = [
@@ -16,14 +16,14 @@ const ACT_BASE_HZ = [
   87, // cost (darkest, tension)
   110, // objective (lifts)
   116, // architecture
-  123, // workflow
-  130, // agent
+  123, // technologies
   127, // jobs
   134, // pipeline
-  131, // mitre
-  138, // smart
-  146, // impact (bright)
-  155, // vision (brightest)
+  138, // suggestions
+  131, // rbac
+  146, // reports
+  155, // dashboard
+  162, // future-work
 ];
 
 let sharedEngine: FypAudio | null = null;
@@ -261,8 +261,8 @@ export class FypAudio {
     this.whoosh(0.1, 400, 1600, 0.75);
   }
 
-  /** Pass 5 — workflow ring alive: mint flow undertone. */
-  workflowFlow(): void {
+  /** Pass 5 — technologies act alive: mint flow undertone. */
+  technologiesFlow(): void {
     const ctx = this.ctx;
     const master = this.master;
     if (!ctx || !master || !this.oscB) return;
@@ -311,51 +311,6 @@ export class FypAudio {
       osc.stop(t0 + 0.5);
     });
     this.boundaryPing();
-  }
-
-  /** Pass 6 — Impact act opening (amber resolution). */
-  impactChime(): void {
-    const ctx = this.ctx;
-    const master = this.master;
-    if (!ctx || !master) return;
-    const now = ctx.currentTime;
-    [392.0, 493.88, 587.33].forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      const g = ctx.createGain();
-      const t0 = now + i * 0.055;
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(0.085, t0 + 0.05);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.5);
-      osc.connect(g);
-      g.connect(master);
-      osc.start(t0);
-      osc.stop(t0 + 1.55);
-    });
-    this.whoosh(0.09, 500, 2000, 0.65);
-  }
-
-  /** Pass 6 — Vision finale (bright resolve). */
-  visionResolve(): void {
-    const ctx = this.ctx;
-    const master = this.master;
-    if (!ctx || !master) return;
-    const now = ctx.currentTime;
-    [523.25, 659.25, 783.99, 987.77].forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      osc.type = i === 3 ? 'triangle' : 'sine';
-      osc.frequency.value = freq;
-      const g = ctx.createGain();
-      const t0 = now + i * 0.045;
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(0.07, t0 + 0.04);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.8);
-      osc.connect(g);
-      g.connect(master);
-      osc.start(t0);
-      osc.stop(t0 + 1.85);
-    });
   }
 
   /** A soft chord for landmark beats (legacy / manual). */
